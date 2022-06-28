@@ -7,10 +7,13 @@ import { Phase } from './models/phase';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
   title = 'FARS';
+
+  matchScroe = 2280;
+  fakeScore = 0;
 
   items = ['Carrots', 'Tomatoes', 'Onions', 'Apples', 'Avocados', 'Bananas', 'Cucumbers'];
 

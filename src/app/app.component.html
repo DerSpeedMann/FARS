@@ -1,8 +1,17 @@
 <h1>{{title}}</h1>
 
 <div cdkDropListGroup>
-  <mat-accordion multi class="container">
-    <h2>Available Modules</h2>
+  <!-- Upload fingerprints Start-->
+  <div class="container-outer">
+      <h2>Enrolled Fingerprint</h2>
+      <app-upload-image></app-upload-image>
+      <h2>Input Fingerprint</h2>
+      <app-upload-image></app-upload-image>
+  </div>
+  <!-- Upload fingerprints End-->
+
+  <mat-accordion multi class="container list">
+    <h2 class="left-margin">Available Modules</h2>
 
     <div
       cdkDropList
@@ -23,6 +32,7 @@
     </div>
   </mat-accordion>
 
+  <!--Vertical Accordion Start-->
   <mat-accordion class="vert-accordion">
     <mat-expansion-panel class="vert-accordion-panel" *ngFor="let phase of phases; first as isFirst" [expanded]="isFirst" cdkDrag>
       <mat-expansion-panel-header>
@@ -72,7 +82,14 @@
       </div>
     </mat-expansion-panel>
   </mat-accordion>  
+  <!--Vertical Accordion End-->
 
-  <div class="container">
-    
+   <!-- Control Panel Start-->
+   <div class="footer"> 
+    <button mat-raised-button color="primary">Run</button>
+    <button mat-raised-button color="primary">Step</button>
+    <mat-card-footer color="primary" class="score-box"> <b>Match Score: {{matchScroe}} Fake Score: {{fakeScore}}</b></mat-card-footer>
+  </div>
+  <!-- Control Panel End-->
+
 </div>
