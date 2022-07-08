@@ -4,9 +4,9 @@
   <!-- Upload fingerprints Start-->
   <div class="container-outer">
       <h2>Enrolled Fingerprint</h2>
-      <app-upload-image></app-upload-image>
+      <app-upload-image (fileOutput)=onEnrollUpload($event)></app-upload-image>
       <h2>Input Fingerprint</h2>
-      <app-upload-image></app-upload-image>
+      <app-upload-image (fileOutput)=onInputUpload($event)></app-upload-image>
   </div>
   <!-- Upload fingerprints End-->
 

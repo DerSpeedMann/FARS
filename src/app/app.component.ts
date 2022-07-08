@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Phase } from './models/phase';
@@ -9,15 +9,31 @@ import { Phase } from './models/phase';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'FARS';
-
   matchScroe = 2280;
   fakeScore = 0;
 
   items = ['Carrots', 'Tomatoes', 'Onions', 'Apples', 'Avocados', 'Bananas', 'Cucumbers'];
 
   phases: Phase[] = [new Phase("Preprocessing"), new Phase("Extraction"), new Phase("Matching")];
+
+  enrolledImage: File|undefined;
+  inputImage: File|undefined;
+
+  ngOnInit(): void {
+
+  }
+
+  onEnrollUpload(eventData: { file: File }) {
+    this.enrolledImage = eventData.file;
+    };
+  
+  onInputUpload(eventData: { file: File }) {
+    this.enrolledImage = eventData.file;
+    };
+  
+
 
   // TODO: create template for details
   checkboxControl = new FormControl(false);

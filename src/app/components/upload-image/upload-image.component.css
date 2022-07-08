@@ -1,3 +1,14 @@
+.preview-image{
+  width: 200px;
+  object-fit: cover;
+}
+.preview-image-outer{
+  display: flex;
+  width: 200px;
+  height: 250px;
+  overflow: hidden;
+}
+
 .file-input {
   display: none;
 }

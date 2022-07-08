@@ -1,7 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { HttpClient, HttpEventType } from '@angular/common/http';
-import { Subscription } from 'rxjs';
-import { take, finalize } from 'rxjs/operators';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'app-upload-image',
@@ -12,48 +9,30 @@ export class UploadImageComponent implements OnInit {
 
   ngOnInit(): void {
   }
-
-  requiredFileType: string | undefined;
+  @Output() fileOutput = new EventEmitter<{ file: File }>();
   
-  fileName = '';
-  uploadProgress: number | undefined;
-  uploadSub: Subscription | undefined;
-
-  constructor(private http: HttpClient) {}
+  requiredFileType: string = "jpg";
+  
+  file:File|undefined;
+  url = '';
 
   onFileSelected(event: any) {
+    var reader = new FileReader();
 
-      const file:File = event.target.files[0];
-
+    const file:File = event.target.files[0];
+    console.log(file.type);
+    reader.onload = (event: any) => {
       if (file) {
-        this.fileName = file.name;
-        const formData = new FormData();
-        formData.append("thumbnail", file);
+        this.file = file;
+        this.fileOutput.emit({file: this.file})
+      }
+      this.url = event.target.result;
+    };
 
-        const upload$ = this.http.post("/api/thumbnail-upload", formData, {
-            reportProgress: true,
-            observe: 'events'
-        })
-        .pipe(
-            finalize(() => this.reset())
-        );
-      
-        this.uploadSub = upload$.subscribe(event => {
-          if (event.type == HttpEventType.UploadProgress && event.total != undefined) {
-            this.uploadProgress = Math.round(100 * (event.loaded / event.total));
-          }
-        })
-    }
+    reader.onerror = (event: any) => {
+      console.log("File could not be read: " + event.target.error.code);
+    };
+
+    reader.readAsDataURL(event.target.files[0]);
   }
-
-  cancelUpload() {
-    this.uploadSub?.unsubscribe();
-    this.reset();
-  }
-
-  reset() {
-    this.uploadProgress = undefined;
-    this.uploadSub = undefined;
-  }
-
 }
