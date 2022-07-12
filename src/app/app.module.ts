@@ -20,12 +20,14 @@ import { MatCardModule } from '@angular/material/card';
 
 import { ModuleDetailsComponent } from './components/module-details/module-details.component'; 
 import { UploadImageComponent } from './components/upload-image/upload-image.component';
+import { Wasm3dCubeComponent } from './wasm/3d-cube/3d-cube.component'
 
 @NgModule({
   declarations: [
     AppComponent,
     ModuleDetailsComponent,
-    UploadImageComponent
+    UploadImageComponent,
+    Wasm3dCubeComponent,
   ],
   imports: [
     BrowserModule,
