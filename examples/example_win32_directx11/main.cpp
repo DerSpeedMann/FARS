@@ -8,7 +8,7 @@
 #include <d3d11.h>
 #include <tchar.h>
 
-#include "ImageVisualizer.h"
+#include "ImageVisualiser.h"
 #include "FarsUI.h"
 
 // Data
@@ -95,7 +95,7 @@ int main(int, char**)
     //IM_ASSERT(font != NULL);
 
     // Init FARS Dependencies
-    ImageVisualizer::DX11_Init(g_pd3dDevice);
+    ImageVisualiser::DX11_Init(g_pd3dDevice);
 
     // Our state
     bool show_demo_window = true;

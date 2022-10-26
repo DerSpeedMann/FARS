@@ -2,7 +2,7 @@
 #include "imgui.h"
 #include "ModuleCaller.h"
 #include "Module.h"
-#include "ImageVisualizer.h"
+#include "ImageVisualiser.h"
 #include "imgui_impl_dx11.h"
 #include <locale>
 #include <codecvt>
@@ -24,7 +24,7 @@ namespace FarsUI
         Module::Module("Test2", L"fjfxSample.exe", L"fjfx01.ist"),
     };
 
-    static int selectedExtractionModule = 0; // Here we store our selection data as an index.
+    static int selectedExtractionModule = 0;
     static Module ExtractionModules[3] = {
         Module::Module("FingerJetFXOSE", L"fjfxSample.exe", L"fjfx01.ist"),
         Module::Module("Test", L"fjfxSample.exe", L"fjfx01.ist"),
@@ -35,10 +35,11 @@ namespace FarsUI
 
     void LoadInputImage(std::string imagePath)
     {
-        //std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-        //std::string narrow = converter.to_bytes(InputImage);
-
-        bool ret = ImageVisualizer::LoadTextureFromFile(imagePath.c_str(), &my_texture, &my_image_width, &my_image_height);
+        bool ret = ImageVisualiser::LoadTextureFromFile(imagePath.c_str(), &my_texture, &my_image_width, &my_image_height);
+        if (ret)
+        {
+            InputImage = imagePath;
+        }
         std::cout << ret;
     }
 
@@ -49,16 +50,18 @@ namespace FarsUI
         {
             if (!currentModule.Run(activeFile))
             {
-                //TODO: visualize error
+                //TODO: visualise error
                 break;
             }
             activeFile = currentModule.GetOutputFile();
         }
+
+        ExtractionModules[selectedExtractionModule].Run(activeFile);
     }
 
     void RenderUI()
     {
-        static char buf[32] = "Debug/Fingerprints/a001_03p.pgm";
+        static char buf[64] = "Debug/Fingerprints/a001_03p.pgm";
         ImGui::Begin("FingerprintImage");
         ImGui::InputText("FilePath", buf, IM_ARRAYSIZE(buf));
         if (ImGui::Button("LoadImage"))
@@ -67,8 +70,8 @@ namespace FarsUI
         }
         if (my_texture != NULL)
         {
-            ImVec2 avail_size = ImGui::GetContentRegionAvail();
-            ImVec2 imageSize = ImageVisualizer::CalculateResolution(my_image_width, my_image_height, avail_size.x, avail_size.y);
+            ImVec2 availSize = ImGui::GetContentRegionAvail();
+            ImVec2 imageSize = ImageVisualiser::CalculateResolution(my_image_width, my_image_height, availSize.x, availSize.y);
 
             ImGui::Image((void*)my_texture, imageSize);
         }
@@ -76,6 +79,13 @@ namespace FarsUI
 
         RenderPreprocessing();
 
+        RenderExtraction();
+
+        RenderControl();
+    }
+
+    void RenderExtraction()
+    {
         ImGui::Begin("Extraction");
 
         ImGui::Text("Select Module:");
@@ -98,7 +108,6 @@ namespace FarsUI
         ExtractionModules[selectedExtractionModule].Render();
         ImGui::End();
     }
-
     void RenderPreprocessing()
     {
         ImGui::Begin("Preprocessing");
@@ -108,22 +117,20 @@ namespace FarsUI
         {
             Module _module = PreprocessingModules[n];
             ImGui::PushID(n);
-            if (ImGui::CollapsingHeader(_module.GetModuleName().c_str()))
-            {
-                _module.Render();
-            }
+            bool showModuleDetails = ImGui::CollapsingHeader(_module.GetModuleName().c_str());
+            
 
-            // Our buttons are both drag sources and drag targets here!
+            // Our headers are both drag sources and drag targets
             if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceNoHoldToOpenOthers))
             {
                 // Set payload to carry the index of our item (could be anything)
-                ImGui::SetDragDropPayload("DND_DEMO_CELL", &n, sizeof(int));
+                ImGui::SetDragDropPayload("PREPROCESSING_MODULE", &n, sizeof(int));
 
                 ImGui::EndDragDropSource();
             }
             if (ImGui::BeginDragDropTarget())
             {
-                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DND_DEMO_CELL"))
+                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("PREPROCESSING_MODULE"))
                 {
                     IM_ASSERT(payload->DataSize == sizeof(int));
                     int payload_n = *(const int*)payload->Data;
@@ -134,6 +141,20 @@ namespace FarsUI
                 ImGui::EndDragDropTarget();
             }
             ImGui::PopID();
+
+            if (showModuleDetails)
+            {
+                _module.Render();
+            }
+        }
+        ImGui::End();
+    }
+    void RenderControl()
+    {
+        ImGui::Begin("ControlPanel");
+        if(ImGui::Button("Run"))
+        {
+            Run();
         }
         ImGui::End();
     }

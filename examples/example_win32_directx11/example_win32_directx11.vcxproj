@@ -150,7 +150,7 @@
     <ClInclude Include="..\..\backends\imgui_impl_dx11.h" />
     <ClInclude Include="..\..\backends\imgui_impl_win32.h" />
     <ClInclude Include="FarsUI.h" />
-    <ClInclude Include="ImageVisualizer.h" />
+    <ClInclude Include="ImageVisualiser.h" />
     <ClInclude Include="Module.h" />
     <ClInclude Include="ModuleCaller.h" />
   </ItemGroup>
@@ -163,7 +163,7 @@
     <ClCompile Include="..\..\backends\imgui_impl_dx11.cpp" />
     <ClCompile Include="..\..\backends\imgui_impl_win32.cpp" />
     <ClCompile Include="FarsUI.cpp" />
-    <ClCompile Include="ImageVisualizer.cpp" />
+    <ClCompile Include="ImageVisualiser.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Module.cpp" />
     <ClCompile Include="ModuleCaller.cpp" />

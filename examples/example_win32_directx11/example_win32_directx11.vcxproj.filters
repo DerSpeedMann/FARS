@@ -39,7 +39,7 @@
     <ClInclude Include="ModuleCaller.h">
       <Filter>sources\Fars</Filter>
     </ClInclude>
-    <ClInclude Include="ImageVisualizer.h">
+    <ClInclude Include="ImageVisualiser.h">
       <Filter>sources\Fars</Filter>
     </ClInclude>
   </ItemGroup>
@@ -77,7 +77,7 @@
     <ClCompile Include="ModuleCaller.cpp">
       <Filter>sources\Fars</Filter>
     </ClCompile>
-    <ClCompile Include="ImageVisualizer.cpp">
+    <ClCompile Include="ImageVisualiser.cpp">
       <Filter>sources\Fars</Filter>
     </ClCompile>
   </ItemGroup>

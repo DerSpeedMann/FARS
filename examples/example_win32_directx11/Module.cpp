@@ -27,7 +27,9 @@
     void Module::Render()
     {
         static float value = 0.0f;
+        static int value2 = 0;
         ImGui::DragFloat("Value", &value);
+        ImGui::DragInt("Value2", &value2);
     }
     void Module::SetOutputFile(std::wstring fileName)
     {
