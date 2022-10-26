@@ -1,17 +1,17 @@
 #define STB_IMAGE_IMPLEMENTATION
-#include "ImageVisualizer.h"
+#include "ImageVisualiser.h"
 #include <iostream>
 
 // Other examples: https://github.com/ocornut/imgui/wiki/Image-Loading-and-Displaying-Examples
 
 static ID3D11Device* g_pd3dDevice = NULL;
 
-void ImageVisualizer::DX11_Init(ID3D11Device* device)
+void ImageVisualiser::DX11_Init(ID3D11Device* device)
 {
     g_pd3dDevice = device;
 }
 
-ImVec2 ImageVisualizer::CalculateResolution(int originalWidth, int originalHeight, int maxWidth, int maxHeight)
+ImVec2 ImageVisualiser::CalculateResolution(int originalWidth, int originalHeight, int maxWidth, int maxHeight)
 {
     int aspectRatio = originalHeight / originalWidth;
     ImVec2 newSize = ImVec2(originalWidth, originalHeight);
@@ -31,7 +31,7 @@ ImVec2 ImageVisualizer::CalculateResolution(int originalWidth, int originalHeigh
 }
 
 // Simple helper function to load an image into a DX11 texture with common settings
-bool ImageVisualizer::LoadTextureFromFile(const char* filename, ID3D11ShaderResourceView** out_srv, int* out_width, int* out_height)
+bool ImageVisualiser::LoadTextureFromFile(const char* filename, ID3D11ShaderResourceView** out_srv, int* out_width, int* out_height)
 {
     if (g_pd3dDevice == NULL)
     {

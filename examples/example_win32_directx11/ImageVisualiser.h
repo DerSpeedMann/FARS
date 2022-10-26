@@ -4,7 +4,7 @@
 #include "imgui_impl_dx11.h"
 #include <d3d11.h>
 
-class ImageVisualizer
+class ImageVisualiser
 {
 public:
     static ImVec2 CalculateResolution(int originalWidth, int originalHeight, int maxWidth, int maxHeight);
