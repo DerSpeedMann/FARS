@@ -17,10 +17,10 @@
     bool Module::Run(std::wstring inputFile)
     {
         std::wstring parameters = inputFile + L" " + ModuleCaller::GetTmpPath() + OutputFile;
-        bool exitCode = ModuleCaller::CallModule(ModuleCaller::GetModulePath() + ModuleExecutable, parameters);
+        int exitCode = ModuleCaller::CallModule(ModuleCaller::GetModulePath() + ModuleExecutable, parameters);
         if (exitCode != 0)
         {
-            std::cout << "Program closed with error!\n";
+            std::cout << printf("Program closed with error %d!\n", exitCode);
         };
         return exitCode != 0;
     }

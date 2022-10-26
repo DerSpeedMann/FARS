@@ -12,7 +12,7 @@
 
 namespace FarsUI
 {
-    std::wstring InputImage = ModuleCaller::GetFingerprintsPath() + L"a001_03p.pgm";
+    std::wstring InputImage;
 
     int my_image_width = 0;
     int my_image_height = 0;
@@ -35,23 +35,31 @@ namespace FarsUI
 
     void LoadInputImage(std::string imagePath)
     {
-        bool ret = ImageVisualiser::LoadTextureFromFile(imagePath.c_str(), &my_texture, &my_image_width, &my_image_height);
-        if (ret)
+        if (!ImageVisualiser::LoadTextureFromFile(imagePath.c_str(), &my_texture, &my_image_width, &my_image_height))
         {
-            InputImage = imagePath;
+            std::cout << printf("Loading Image failed!\n");
+            return;
         }
-        std::cout << ret;
+        
+        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+        InputImage = converter.from_bytes(imagePath);
     }
 
     void Run()
     {
+        if (InputImage.empty())
+        {
+            std::cout << "No Fingerprint selected!\n";
+            return;
+        }
+
         activeFile = InputImage;
         for each (Module currentModule in PreprocessingModules)
         {
             if (!currentModule.Run(activeFile))
             {
                 //TODO: visualise error
-                break;
+                continue;
             }
             activeFile = currentModule.GetOutputFile();
         }
