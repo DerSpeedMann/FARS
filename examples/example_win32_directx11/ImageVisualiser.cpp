@@ -1,14 +1,25 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "ImageVisualiser.h"
 #include <iostream>
+#include <fstream>
+#include "opencv2/imgcodecs.hpp"
+#include "opencv2/core/directx.hpp"
+#include "opencv2/imgproc.hpp"
 
 // Other examples: https://github.com/ocornut/imgui/wiki/Image-Loading-and-Displaying-Examples
 
 static ID3D11Device* g_pd3dDevice = NULL;
+static cv::ocl::Context m_oclCtx;
 
 void ImageVisualiser::DX11_Init(ID3D11Device* device)
 {
     g_pd3dDevice = device;
+    // initialize OpenCL context of OpenCV lib from DirectX
+    if (cv::ocl::haveOpenCL())
+    {
+        m_oclCtx = cv::directx::ocl::initializeContextFromD3D11Device(g_pd3dDevice);
+    }
+
 }
 
 ImVec2 ImageVisualiser::CalculateResolution(int originalWidth, int originalHeight, int maxWidth, int maxHeight)
@@ -30,12 +41,75 @@ ImVec2 ImageVisualiser::CalculateResolution(int originalWidth, int originalHeigh
     return newSize;
 }
 
-// Simple helper function to load an image into a DX11 texture with common settings
 bool ImageVisualiser::LoadTextureFromFile(const char* filename, ID3D11ShaderResourceView** out_srv, int* out_width, int* out_height)
 {
     if (g_pd3dDevice == NULL)
     {
-        std::cout << "DX11 device is not initialized!";
+        std::cout << "DX11 device is not initialized!\n";
+        return false;
+    }
+
+    cv::Mat src = cv::imread(filename, cv::IMREAD_COLOR | cv::IMREAD_ANYDEPTH);
+
+    if (src.empty())
+    {
+        std::cout << "Image not found or invalid Image!\n";
+        return false;
+    }
+    cv::Mat RGBAMat;
+    cv::cvtColor(src, RGBAMat, cv::COLOR_BGR2BGRA);
+
+    *out_width = RGBAMat.size().width;
+    *out_height = RGBAMat.size().height;
+
+    // Create texture
+    D3D11_TEXTURE2D_DESC desc;
+    ZeroMemory(&desc, sizeof(desc));
+    desc.Width = *out_width;
+    desc.Height = *out_height;
+    desc.MipLevels = 1;
+    desc.ArraySize = 1;
+    desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    desc.SampleDesc.Count = 1;
+    desc.Usage = D3D11_USAGE_DEFAULT;
+    desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+    desc.CPUAccessFlags = 0;
+
+    ID3D11Texture2D* pTexture = NULL;
+
+    HRESULT r = g_pd3dDevice->CreateTexture2D(&desc, 0, &pTexture);
+    if (FAILED(r))
+    {
+        throw std::runtime_error("Can't create DX11 texture\n");
+    }
+
+    cv::directx::convertToD3D11Texture2D(RGBAMat, pTexture);
+    if (pTexture == NULL)
+    {
+        std::cout << "DX11 device is not initialized!\n";
+        return false;
+    }
+
+    // Create texture view
+    D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+    ZeroMemory(&srvDesc, sizeof(srvDesc));
+    srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    srvDesc.Texture2D.MipLevels = 1;
+    srvDesc.Texture2D.MostDetailedMip = 0;
+    g_pd3dDevice->CreateShaderResourceView(pTexture, &srvDesc, out_srv);
+    pTexture->Release();
+
+    std::cout << printf("Did load image w: %d h: %d\n", *out_width, *out_height);
+
+    return true;
+}
+// Simple helper function to load an image into a DX11 texture with common settings
+bool LoadTextureFromFileST(const char* filename, ID3D11ShaderResourceView** out_srv, int* out_width, int* out_height)
+{
+    if (g_pd3dDevice == NULL)
+    {
+        std::cout << "DX11 device is not initialized!\n";
         return false;
     }
 
@@ -45,7 +119,7 @@ bool ImageVisualiser::LoadTextureFromFile(const char* filename, ID3D11ShaderReso
     unsigned char* image_data = stbi_load(filename, &image_width, &image_height, NULL, 4);
     if (image_data == NULL)
     {
-        std::cout << "Image not found or invalid Image!";
+        std::cout << "Image not found or invalid Image!\n";
         return false;
     }
 

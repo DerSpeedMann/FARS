@@ -14,9 +14,9 @@ namespace FarsUI
 {
     std::wstring InputImage;
 
-    int my_image_width = 0;
-    int my_image_height = 0;
-    ID3D11ShaderResourceView* my_texture = NULL;
+    int template_image_width = 0;
+    int template_image_height = 0;
+    ID3D11ShaderResourceView* template_texture = NULL;
 
     static Module PreprocessingModules[3] = {
         Module::Module("FingerJetFXOSE", L"fjfxSample.exe", L"fjfx01.ist"),
@@ -35,7 +35,7 @@ namespace FarsUI
 
     void LoadInputImage(std::string imagePath)
     {
-        if (!ImageVisualiser::LoadTextureFromFile(imagePath.c_str(), &my_texture, &my_image_width, &my_image_height))
+        if (!ImageVisualiser::LoadTextureFromFile(imagePath.c_str(), &template_texture, &template_image_width, &template_image_height))
         {
             std::cout << printf("Loading Image failed!\n");
             return;
@@ -76,12 +76,12 @@ namespace FarsUI
         {
             LoadInputImage(buf);
         }
-        if (my_texture != NULL)
+        if (template_texture != NULL)
         {
             ImVec2 availSize = ImGui::GetContentRegionAvail();
-            ImVec2 imageSize = ImageVisualiser::CalculateResolution(my_image_width, my_image_height, availSize.x, availSize.y);
+            ImVec2 imageSize = ImageVisualiser::CalculateResolution(template_image_width, template_image_height, availSize.x, availSize.y);
 
-            ImGui::Image((void*)my_texture, imageSize);
+            ImGui::Image((void*)template_texture, imageSize);
         }
         ImGui::End();
 
