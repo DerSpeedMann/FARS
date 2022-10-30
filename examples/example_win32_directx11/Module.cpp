@@ -18,16 +18,17 @@
     {
         ImGui::Text("Generic Details");
     }
-    bool Module::Run(std::wstring inputFile)
+    bool Module::Run(std::string inputFile, std::string* out_outputFile)
     {
+        *out_outputFile = "";
         return true;
     }
-    void Module::SetOutputFile(std::wstring fileName)
+    void Module::SetOutputFile(std::string fileName)
     {
         // TODO: check if file exists
         OutputFile = fileName;
     }
-    std::wstring Module::GetOutputFile()
+    std::string Module::GetOutputFile()
     {
         return OutputFile;
     }

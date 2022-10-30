@@ -8,5 +8,5 @@ public:
 
     void Render() override;
 
-    bool Run(std::wstring inputFile);
+    bool Run(std::string inputFile, std::string* out_outputFile) override;
 };

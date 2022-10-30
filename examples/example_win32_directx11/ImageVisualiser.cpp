@@ -2,9 +2,6 @@
 #include "ImageVisualiser.h"
 #include <iostream>
 #include <fstream>
-#include "opencv2/imgcodecs.hpp"
-#include "opencv2/core/directx.hpp"
-#include "opencv2/imgproc.hpp"
 
 // Other examples: https://github.com/ocornut/imgui/wiki/Image-Loading-and-Displaying-Examples
 
@@ -41,6 +38,18 @@ ImVec2 ImageVisualiser::CalculateResolution(int originalWidth, int originalHeigh
     return newSize;
 }
 
+bool ImageVisualiser::SaveImageToFile(const char* filename, cv::Mat img) {
+    return cv::imwrite(filename, img);
+}
+
+cv::Mat ImageVisualiser::LoadImageMatrixFromFile(const char* filename, int flags, int* out_width, int* out_height)
+{
+    cv::Mat src = cv::imread(filename, flags);
+    *out_width = src.size().width;
+    *out_height = src.size().height;
+    return src;
+}
+
 bool ImageVisualiser::LoadTextureFromFile(const char* filename, ID3D11ShaderResourceView** out_srv, int* out_width, int* out_height)
 {
     if (g_pd3dDevice == NULL)
@@ -49,7 +58,7 @@ bool ImageVisualiser::LoadTextureFromFile(const char* filename, ID3D11ShaderReso
         return false;
     }
 
-    cv::Mat src = cv::imread(filename, cv::IMREAD_COLOR | cv::IMREAD_ANYDEPTH);
+    cv::Mat src = LoadImageMatrixFromFile(filename, cv::IMREAD_COLOR | cv::IMREAD_ANYDEPTH, out_width, out_height);
 
     if (src.empty())
     {
@@ -58,9 +67,6 @@ bool ImageVisualiser::LoadTextureFromFile(const char* filename, ID3D11ShaderReso
     }
     cv::Mat RGBAMat;
     cv::cvtColor(src, RGBAMat, cv::COLOR_BGR2BGRA);
-
-    *out_width = RGBAMat.size().width;
-    *out_height = RGBAMat.size().height;
 
     // Create texture
     D3D11_TEXTURE2D_DESC desc;

@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <iostream>
 #include <windows.h>
+#include <codecvt>
 
 namespace ModuleCaller
 {
@@ -34,6 +35,15 @@ namespace ModuleCaller
     std::wstring GetModulePath()
     {
         return GetExePath() + ModulePath;
+    }
+
+    std::string stringConvert(std::wstring wstring) {
+        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+        return converter.to_bytes(wstring);
+    }
+    std::wstring stringConvert(std::string string) {
+        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+        return converter.from_bytes(string);
     }
 
     int CallModule(std::wstring executablePath, std::wstring parameters)

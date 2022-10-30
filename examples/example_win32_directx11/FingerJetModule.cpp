@@ -9,7 +9,7 @@
 FingerJetModule::FingerJetModule()
 {
     ModuleName = "FingerJetFXOSE";
-    OutputFile = L"fjfx01.ist";
+    OutputFile = "fjfx01.ist";
     ModuleExecutable = L"fjfxSample.exe";
 }
 
@@ -21,12 +21,14 @@ void FingerJetModule::Render()
     ImGui::DragInt("Value2", &value2);
 }
 
-bool FingerJetModule::Run(std::wstring inputFile) {
-    std::wstring parameters = inputFile + L" " + ModuleCaller::GetTmpPath() + OutputFile;
+bool FingerJetModule::Run(std::string inputFile, std::string* out_outputFile) {
+
+    std::wstring parameters = ModuleCaller::stringConvert(inputFile) + L" " + ModuleCaller::GetTmpPath() + ModuleCaller::stringConvert(OutputFile);
     int exitCode = ModuleCaller::CallModule(ModuleCaller::GetModulePath() + ModuleExecutable, parameters);
     if (exitCode != 0)
     {
         std::cout << printf("Program closed with error %d!\n", exitCode);
     };
+    *out_outputFile = OutputFile;
     return exitCode != 0;
 }

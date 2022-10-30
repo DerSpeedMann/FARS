@@ -7,5 +7,5 @@ public:
     FingerJetModule();
     void Render() override;
 
-    bool Run(std::wstring inputFile) override;
+    bool Run(std::string inputFile, std::string* out_outputFile) override;
 };

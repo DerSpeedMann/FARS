@@ -16,7 +16,7 @@
 namespace FarsUI
 {
 
-    std::wstring InputImage;
+    std::string InputImage;
 
     int template_image_width = 0;
     int template_image_height = 0;
@@ -37,7 +37,7 @@ namespace FarsUI
     };
     static int selectedExtractionModule = 0;
     
-    std::wstring activeFile;
+    std::string activeFile;
 
     void LoadInputImage(std::string imagePath)
     {
@@ -47,8 +47,7 @@ namespace FarsUI
             return;
         }
         
-        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-        InputImage = converter.from_bytes(imagePath);
+        InputImage = imagePath;
     }
 
     void Run()
@@ -59,6 +58,7 @@ namespace FarsUI
             return;
         }
 
+        std::string out = "";
         activeFile = InputImage;
         for (int i = 0; i < IM_ARRAYSIZE(PreprocessingModules); i++)
         {
@@ -67,15 +67,15 @@ namespace FarsUI
                 continue;
             }
 
-            if (!(*PreprocessingModules[i]).Run(activeFile))
+            if (!(*PreprocessingModules[i]).Run(activeFile, &out))
             {
                 //TODO: visualise error
                 continue;
             }
-            activeFile = (*PreprocessingModules[i]).GetOutputFile();
+            activeFile = out;
         }
 
-        (*ExtractionModules[selectedExtractionModule]).Run(activeFile);
+        (*ExtractionModules[selectedExtractionModule]).Run(activeFile, &out);
     }
 
     void RenderUI()
