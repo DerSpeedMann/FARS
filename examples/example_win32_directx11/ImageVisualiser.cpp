@@ -86,7 +86,7 @@ bool ImageVisualiser::LoadTextureFromFile(const char* filename, ID3D11ShaderReso
     cv::directx::convertToD3D11Texture2D(RGBAMat, pTexture);
     if (pTexture == NULL)
     {
-        std::cout << "DX11 device is not initialized!\n";
+        std::cout << "Converting texture to DX11 failed!\n";
         return false;
     }
 

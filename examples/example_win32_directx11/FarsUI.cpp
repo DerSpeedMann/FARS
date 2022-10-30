@@ -2,35 +2,40 @@
 #include "imgui.h"
 #include "ModuleCaller.h"
 #include "Module.h"
+#include "FingerJetModule.h"
+#include "ImageConvertingModule.h"
 #include "ImageVisualiser.h"
 #include "imgui_impl_dx11.h"
 #include <locale>
 #include <codecvt>
 #include <string>
+#include <vector>
 #include <iostream>
 #include <d3d11.h>
 
 namespace FarsUI
 {
+
     std::wstring InputImage;
 
     int template_image_width = 0;
     int template_image_height = 0;
     ID3D11ShaderResourceView* template_texture = NULL;
 
-    static Module PreprocessingModules[3] = {
-        Module::Module("FingerJetFXOSE", L"fjfxSample.exe", L"fjfx01.ist"),
-        Module::Module("Test", L"fjfxSample.exe", L"fjfx01.ist"),
-        Module::Module("Test2", L"fjfxSample.exe", L"fjfx01.ist"),
+
+    static std::unique_ptr<Module> PreprocessingModules[3] = {
+        std::make_unique<ImageConvertingModule>(),
+        std::make_unique<Module>(),
+        std::make_unique<Module>(),
     };
 
     static int selectedExtractionModule = 0;
-    static Module ExtractionModules[3] = {
-        Module::Module("FingerJetFXOSE", L"fjfxSample.exe", L"fjfx01.ist"),
-        Module::Module("Test", L"fjfxSample.exe", L"fjfx01.ist"),
-        Module::Module("Test2", L"fjfxSample.exe", L"fjfx01.ist"),
+    static std::unique_ptr<Module> ExtractionModules[3] = {
+        std::make_unique<FingerJetModule>(),
+        std::make_unique<Module>(),
+        std::make_unique<Module>(),
     };
-
+    
     std::wstring activeFile;
 
     void LoadInputImage(std::string imagePath)
@@ -54,22 +59,22 @@ namespace FarsUI
         }
 
         activeFile = InputImage;
-        for each (Module currentModule in PreprocessingModules)
+        for (int i = 0; i < IM_ARRAYSIZE(PreprocessingModules); i++)
         {
-            if (!currentModule.Run(activeFile))
+            if (!(*PreprocessingModules[i]).Run(activeFile))
             {
                 //TODO: visualise error
                 continue;
             }
-            activeFile = currentModule.GetOutputFile();
+            activeFile = (*PreprocessingModules[i]).GetOutputFile();
         }
 
-        ExtractionModules[selectedExtractionModule].Run(activeFile);
+        (*ExtractionModules[selectedExtractionModule]).Run(activeFile);
     }
 
     void RenderUI()
     {
-        static char buf[64] = "Debug/Fingerprints/a001_03p.pgm";
+        static char buf[128] = "Debug/Fingerprints/a001_03p.pgm";
         ImGui::Begin("FingerprintImage");
         ImGui::InputText("FilePath", buf, IM_ARRAYSIZE(buf));
         if (ImGui::Button("LoadImage"))
@@ -102,7 +107,7 @@ namespace FarsUI
             for (int n = 0; n < IM_ARRAYSIZE(ExtractionModules); n++)
             {
                 const bool is_selected = (selectedExtractionModule == n);
-                if (ImGui::Selectable(ExtractionModules[n].GetModuleName().c_str(), is_selected))
+                if (ImGui::Selectable((*ExtractionModules[n]).GetModuleName().c_str(), is_selected))
                     selectedExtractionModule = n;
 
                 // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
@@ -112,20 +117,20 @@ namespace FarsUI
             ImGui::EndListBox();
         }
         ImGui::Text("Selected Module:");
-        ImGui::CollapsingHeader(ExtractionModules[selectedExtractionModule].GetModuleName().c_str(), ImGuiTreeNodeFlags_Leaf);
-        ExtractionModules[selectedExtractionModule].Render();
+
+        ImGui::CollapsingHeader((*ExtractionModules[selectedExtractionModule]).GetModuleName().c_str(), ImGuiTreeNodeFlags_Leaf);
+        (*ExtractionModules[selectedExtractionModule]).Render();
         ImGui::End();
     }
     void RenderPreprocessing()
     {
         ImGui::Begin("Preprocessing");
-        // Simple reordering
 
+        // Simple reordering
         for (int n = 0; n < IM_ARRAYSIZE(PreprocessingModules); n++)
         {
-            Module _module = PreprocessingModules[n];
             ImGui::PushID(n);
-            bool showModuleDetails = ImGui::CollapsingHeader(_module.GetModuleName().c_str());
+            bool showModuleDetails = ImGui::CollapsingHeader((*PreprocessingModules[n]).GetModuleName().c_str());
             
 
             // Our headers are both drag sources and drag targets
@@ -143,8 +148,7 @@ namespace FarsUI
                     IM_ASSERT(payload->DataSize == sizeof(int));
                     int payload_n = *(const int*)payload->Data;
 
-                    PreprocessingModules[n] = PreprocessingModules[payload_n];
-                    PreprocessingModules[payload_n] = _module;
+                    PreprocessingModules[n].swap(PreprocessingModules[payload_n]);
                 }
                 ImGui::EndDragDropTarget();
             }
@@ -152,7 +156,7 @@ namespace FarsUI
 
             if (showModuleDetails)
             {
-                _module.Render();
+                (*PreprocessingModules[n]).Render();
             }
         }
         ImGui::End();

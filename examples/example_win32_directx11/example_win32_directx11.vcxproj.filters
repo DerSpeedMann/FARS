@@ -45,6 +45,12 @@
     <ClInclude Include="stb_image.h">
       <Filter>sources\Fars</Filter>
     </ClInclude>
+    <ClInclude Include="FingerJetModule.h">
+      <Filter>sources\Fars\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageConvertingModule.h">
+      <Filter>sources\Fars\Modules</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\imgui.cpp">
@@ -83,11 +89,18 @@
     <ClCompile Include="ImageVisualiser.cpp">
       <Filter>sources\Fars</Filter>
     </ClCompile>
+    <ClCompile Include="ImageConvertingModule.cpp">
+      <Filter>sources\Fars\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="FingerJetModule.cpp">
+      <Filter>sources\Fars\Modules</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\README.txt" />
     <None Include="..\..\misc\debuggers\imgui.natvis">
       <Filter>imgui</Filter>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

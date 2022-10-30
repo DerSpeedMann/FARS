@@ -3,18 +3,19 @@
 
 class Module
 {
-private:
-    std::wstring OutputFile;
-    std::string ModuleName;
-    void SetOutputFile(std::wstring fileName);
-
 public:
-    std::wstring ModuleExecutable;
-    Module(std::string moduleName, std::wstring moduleExecutable, std::wstring outputFileName);
+    Module();
     ~Module();
-    void Render();
-    bool Run(std::wstring inputFile);
+    virtual void Render();
+    virtual bool Run(std::wstring inputFile);
     std::wstring GetOutputFile();
     std::string GetModuleName();
+
+protected:
+    std::string ModuleName = "GenericModuleName";
+    std::wstring OutputFile;
+    std::wstring ModuleExecutable;
+
+    void SetOutputFile(std::wstring fileName);
 };
 
