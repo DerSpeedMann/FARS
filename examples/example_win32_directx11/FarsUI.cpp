@@ -22,19 +22,20 @@ namespace FarsUI
     int template_image_height = 0;
     ID3D11ShaderResourceView* template_texture = NULL;
 
-
+    
     static std::unique_ptr<Module> PreprocessingModules[3] = {
         std::make_unique<ImageConvertingModule>(),
         std::make_unique<Module>(),
         std::make_unique<Module>(),
     };
+    static bool preprocessingSelection[IM_ARRAYSIZE(PreprocessingModules)] = {};
 
-    static int selectedExtractionModule = 0;
     static std::unique_ptr<Module> ExtractionModules[3] = {
         std::make_unique<FingerJetModule>(),
         std::make_unique<Module>(),
         std::make_unique<Module>(),
     };
+    static int selectedExtractionModule = 0;
     
     std::wstring activeFile;
 
@@ -61,6 +62,11 @@ namespace FarsUI
         activeFile = InputImage;
         for (int i = 0; i < IM_ARRAYSIZE(PreprocessingModules); i++)
         {
+            if (!preprocessingSelection[i])
+            {
+                continue;
+            }
+
             if (!(*PreprocessingModules[i]).Run(activeFile))
             {
                 //TODO: visualise error
@@ -126,9 +132,28 @@ namespace FarsUI
     {
         ImGui::Begin("Preprocessing");
 
+        ImGui::Text("Select Module:");
+        if (ImGui::BeginListBox("##", ImVec2(-FLT_MIN, 5 * ImGui::GetTextLineHeightWithSpacing())))
+        {
+            for (int n = 0; n < IM_ARRAYSIZE(PreprocessingModules); n++)
+            {
+                if (ImGui::Selectable((*PreprocessingModules[n]).GetModuleName().c_str(), preprocessingSelection[n]))
+                {
+                    preprocessingSelection[n] ^= 1;
+                }
+            }
+            ImGui::EndListBox();
+        }
+
+        ImGui::Text("Selected Modules:");
         // Simple reordering
         for (int n = 0; n < IM_ARRAYSIZE(PreprocessingModules); n++)
         {
+            if (!preprocessingSelection[n])
+            {
+                continue;
+            }
+
             ImGui::PushID(n);
             bool showModuleDetails = ImGui::CollapsingHeader((*PreprocessingModules[n]).GetModuleName().c_str());
             
