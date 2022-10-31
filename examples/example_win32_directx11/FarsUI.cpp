@@ -11,6 +11,7 @@
 #include "ImageConvertingModule.h"
 #include "FingerJetModule.h"
 #include "SourceAFIS_ExtModule.h"
+#include "SourceAFIS_MatModule.h"
 
 #include <locale>
 #include <codecvt>
@@ -21,62 +22,98 @@
 
 namespace FarsUI
 {
-
-    std::string enrollInputImage;
+    // General
     std::string templateFile;
 
+    std::string activeFile;
+    bool enrollView = true;
+
+    char* viewModeText[2] = { "Matching View", "Enroll View" };
+    char* runBText[2] = { "Start Matching", "Enroll Fingerprint" };
+    char* changeViewBText[2] = { "Switch to Enroll", "Switch to Matching" };
+
+    ImGuiInputTextFlags_ fileLoadInputFlags[2] = {ImGuiInputTextFlags_ReadOnly, ImGuiInputTextFlags_None };
+
+    static char enrollInputBuffer[128] = "Debug/Fingerprints/a001_03p.pgm";
+    static char matchingInputBuffer[128] = "Debug/Fingerprints/a001_03p.pgm";
+    
+    static std::unique_ptr<Module> PreprocessingModules[3] = {
+        std::make_unique<ImageConvertingModule>(),
+        std::make_unique<Module>(),
+        std::make_unique<Module>(),
+    };
+    static std::unique_ptr<Module> ExtractionModules[3] = {
+        std::make_unique<FingerJetModule>(),
+        std::make_unique<SourceAFIS_ExtModule>(),
+        std::make_unique<Module>(),
+    };
+    static std::unique_ptr<Module> MatchingModules[3] = {
+        std::make_unique<SourceAFIS_MatModule>(),
+        std::make_unique<Module>(),
+        std::make_unique<Module>(),
+    };
+
+    // Enroll View
+    std::string enrollInputImage;
     int enroll_image_width = 0;
     int enroll_image_height = 0;
     ID3D11ShaderResourceView* enroll_texture = NULL;
 
+    static bool enrollPreprocessingSelection[IM_ARRAYSIZE(PreprocessingModules)] = {};
+    static int enrollSelectedExtractionModule = 0;
+
+    // Matching View
+    std::string matchingInputImage;
     int matching_image_width = 0;
     int matching_image_height = 0;
     ID3D11ShaderResourceView* matching_texture = NULL;
 
-    
-    static std::unique_ptr<Module> PreprocessingModules[3] = {
-        std::make_unique<ImageConvertingModule>(),
-        std::make_unique<SourceAFIS_ExtModule>(),
-        std::make_unique<Module>(),
-    };
-    static bool enrollPreprocessingSelection[IM_ARRAYSIZE(PreprocessingModules)] = {};
-    static bool matchingPreprocessingSelection[IM_ARRAYSIZE(PreprocessingModules)] = {};
-
-    static std::unique_ptr<Module> ExtractionModules[3] = {
-        std::make_unique<FingerJetModule>(),
-        std::make_unique<Module>(),
-        std::make_unique<Module>(),
-    };
-    static int enrollSelectedExtractionModule = 0;
+    static bool matchingPreprocessingSelection[IM_ARRAYSIZE(PreprocessingModules)] = {};  
     static int matchingSelectedExtractionModule = 0;
-    
-    std::string activeFile;
-    bool matchingView = true;
+    static int matchingSelectedMatchingModule = 0;
 
-    void LoadInputImage(std::string imagePath)
+
+    bool LoadInputImage(std::string imagePath)
     {
         if (!ImageVisualizer::LoadTextureFromFile(imagePath.c_str(), &enroll_texture, &enroll_image_width, &enroll_image_height))
         {
             std::cout << printf("Loading Image failed!\n");
-            return;
+            return false;
         }
-        
-        enrollInputImage = imagePath;
+        return true;
     }
 
     void Run()
     {
+
+        std::string out = "";
+        bool *preprocessingSelection;
+
         if (enrollInputImage.empty())
         {
-            std::cout << "No Fingerprint selected!\n";
+            std::cout << "No enroll Fingerprint selected!\n";
             return;
         }
 
-        std::string out = "";
-        activeFile = enrollInputImage;
+        if (enrollView) {
+            activeFile = enrollInputImage;
+            preprocessingSelection = enrollPreprocessingSelection;
+        }
+        else
+        {
+            if (matchingInputImage.empty())
+            {
+                std::cout << "No matching Fingerprint selected!\n";
+                return;
+            }
+            activeFile = matchingInputImage;
+            preprocessingSelection = matchingPreprocessingSelection;
+
+        }
+        
         for (int i = 0; i < IM_ARRAYSIZE(PreprocessingModules); i++)
         {
-            if (!enrollPreprocessingSelection[i])
+            if (!preprocessingSelection[i])
             {
                 continue;
             }
@@ -91,69 +128,88 @@ namespace FarsUI
 
         (*ExtractionModules[enrollSelectedExtractionModule]).Run(activeFile, &out);
 
-        if (matchingView) {
+        if (enrollView) {
             templateFile = out;
             return;
         }
+        (*MatchingModules[matchingSelectedMatchingModule]).Run(activeFile, &out);
 
-
+        //TODO: get result
     }
 
     void RenderUI()
     {
+        bool* preprocessingSelectionArray;
+        int* extractionSelection;
+        if (enrollView)
+        {
+            preprocessingSelectionArray = enrollPreprocessingSelection;
+            extractionSelection = &enrollSelectedExtractionModule;
+        }
+        else
+        {
+            preprocessingSelectionArray = matchingPreprocessingSelection;
+            extractionSelection = &matchingSelectedExtractionModule;
+        }
+
         RenderInput();
 
-        RenderPreprocessing();
+        RenderPreprocessing(preprocessingSelectionArray);
 
-        RenderExtraction();
+        RenderExtraction(extractionSelection);
+
+        if (!enrollView)
+        {
+            RenderMatching();
+        }
 
         RenderControl();
     }
 
     void RenderInput() {
-        static char buf[128] = "Debug/Fingerprints/a001_03p.pgm";
-        ImGui::Begin("FingerprintImage");
-        ImGui::InputText("FilePath", buf, IM_ARRAYSIZE(buf));
-        if (ImGui::Button("LoadImage"))
-        {
-            LoadInputImage(buf);
-        }
-        if (enroll_texture != NULL)
-        {
-            ImVec2 availSize = ImGui::GetContentRegionAvail();
-            ImVec2 imageSize = ImageVisualizer::CalculateResolution(enroll_image_width, enroll_image_height, availSize.x, availSize.y);
 
-            ImGui::Image((void*)enroll_texture, imageSize);
-        }
-        ImGui::End();
-    }
+        ImGui::Begin("Fingerprint Images");
 
-    void RenderExtraction()
-    {
-        ImGui::Begin("Extraction");
-
-        ImGui::Text("Select Module:");
-        if (ImGui::BeginListBox("##", ImVec2(-FLT_MIN, 5 * ImGui::GetTextLineHeightWithSpacing())))
+        if (ImGui::CollapsingHeader("Enrolled Image", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_DefaultOpen))
         {
-            for (int n = 0; n < IM_ARRAYSIZE(ExtractionModules); n++)
+            ImGui::InputText("FilePath", enrollInputBuffer, IM_ARRAYSIZE(enrollInputBuffer), fileLoadInputFlags[enrollView]);
+            if (ImGui::Button("LoadImage") && LoadInputImage(enrollInputBuffer))
             {
-                const bool is_selected = (enrollSelectedExtractionModule == n);
-                if (ImGui::Selectable((*ExtractionModules[n]).GetModuleName().c_str(), is_selected))
-                    enrollSelectedExtractionModule = n;
-
-                // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-                if (is_selected)
-                    ImGui::SetItemDefaultFocus();
+                enrollInputImage = enrollInputBuffer;
             }
-            ImGui::EndListBox();
-        }
-        ImGui::Text("Selected Module:");
+            if (enroll_texture != NULL)
+            {
+                ImVec2 availSize = ImGui::GetContentRegionAvail();
+                ImVec2 imageSize = ImageVisualizer::CalculateResolution(enroll_image_width, enroll_image_height, availSize.x, availSize.y);
 
-        ImGui::CollapsingHeader((*ExtractionModules[enrollSelectedExtractionModule]).GetModuleName().c_str(), ImGuiTreeNodeFlags_Leaf);
-        (*ExtractionModules[enrollSelectedExtractionModule]).Render();
+                ImGui::Image((void*)enroll_texture, imageSize);
+            }
+        }
+        
+
+        if (enrollView) {
+            ImGui::End();
+            return;
+        }
+
+        if (ImGui::CollapsingHeader("Matching Image", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_DefaultOpen)) {
+            ImGui::InputText("FilePath", matchingInputBuffer, IM_ARRAYSIZE(matchingInputBuffer), fileLoadInputFlags[!enrollView]);
+            if (ImGui::Button("LoadImage") && LoadInputImage(matchingInputBuffer))
+            {
+                matchingInputImage = matchingInputBuffer;
+            }
+            if (matching_texture != NULL)
+            {
+                ImVec2 availSize = ImGui::GetContentRegionAvail();
+                ImVec2 imageSize = ImageVisualizer::CalculateResolution(matching_image_width, matching_image_height, availSize.x, availSize.y);
+
+                ImGui::Image((void*)matching_texture, imageSize);
+            }
+        }
+
         ImGui::End();
     }
-    void RenderPreprocessing()
+    void RenderPreprocessing(bool *preprocessingSelectionArray)
     {
         ImGui::Begin("Preprocessing");
 
@@ -162,9 +218,9 @@ namespace FarsUI
         {
             for (int n = 0; n < IM_ARRAYSIZE(PreprocessingModules); n++)
             {
-                if (ImGui::Selectable((*PreprocessingModules[n]).GetModuleName().c_str(), enrollPreprocessingSelection[n]))
+                if (ImGui::Selectable((*PreprocessingModules[n]).GetModuleName().c_str(), preprocessingSelectionArray[n]))
                 {
-                    enrollPreprocessingSelection[n] ^= 1;
+                    preprocessingSelectionArray[n] ^= 1;
                 }
             }
             ImGui::EndListBox();
@@ -174,14 +230,14 @@ namespace FarsUI
         // Simple reordering
         for (int n = 0; n < IM_ARRAYSIZE(PreprocessingModules); n++)
         {
-            if (!enrollPreprocessingSelection[n])
+            if (!preprocessingSelectionArray[n])
             {
                 continue;
             }
 
             ImGui::PushID(n);
             bool showModuleDetails = ImGui::CollapsingHeader((*PreprocessingModules[n]).GetModuleName().c_str());
-            
+
 
             // Our headers are both drag sources and drag targets
             if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceNoHoldToOpenOthers))
@@ -211,12 +267,68 @@ namespace FarsUI
         }
         ImGui::End();
     }
+    void RenderExtraction(int *extractionSelection)
+    {
+        ImGui::Begin("Extraction");
+
+        ImGui::Text("Select Module:");
+        if (ImGui::BeginListBox("##", ImVec2(-FLT_MIN, 5 * ImGui::GetTextLineHeightWithSpacing())))
+        {
+            for (int n = 0; n < IM_ARRAYSIZE(ExtractionModules); n++)
+            {
+                const bool is_selected = (*extractionSelection == n);
+                if (ImGui::Selectable((*ExtractionModules[n]).GetModuleName().c_str(), is_selected))
+                    *extractionSelection = n;
+
+                // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                if (is_selected)
+                    ImGui::SetItemDefaultFocus();
+            }
+            ImGui::EndListBox();
+        }
+        ImGui::Text("Selected Module:");
+
+        ImGui::CollapsingHeader((*ExtractionModules[*extractionSelection]).GetModuleName().c_str(), ImGuiTreeNodeFlags_Leaf);
+        (*ExtractionModules[*extractionSelection]).Render();
+        ImGui::End();
+    }
+    void RenderMatching() {
+        ImGui::Begin("Matching");
+
+        ImGui::Text("Select Module:");
+        if (ImGui::BeginListBox("##", ImVec2(-FLT_MIN, 5 * ImGui::GetTextLineHeightWithSpacing())))
+        {
+            for (int n = 0; n < IM_ARRAYSIZE(MatchingModules); n++)
+            {
+                const bool is_selected = (matchingSelectedMatchingModule == n);
+                if (ImGui::Selectable((*MatchingModules[n]).GetModuleName().c_str(), is_selected))
+                    matchingSelectedMatchingModule = n;
+
+                // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                if (is_selected)
+                    ImGui::SetItemDefaultFocus();
+            }
+            ImGui::EndListBox();
+        }
+        ImGui::Text("Selected Module:");
+
+        ImGui::CollapsingHeader((*MatchingModules[matchingSelectedMatchingModule]).GetModuleName().c_str(), ImGuiTreeNodeFlags_Leaf);
+        (*MatchingModules[matchingSelectedMatchingModule]).Render();
+        ImGui::End();
+    }
     void RenderControl()
     {
         ImGui::Begin("ControlPanel");
-        if(ImGui::Button("Run"))
+        ImGui::Text(viewModeText[enrollView]);
+
+        if (ImGui::Button(runBText[enrollView]))
         {
             Run();
+        }
+
+        if(ImGui::Button(changeViewBText[enrollView]))
+        {
+            enrollView ^= true;
         }
         ImGui::End();
     }
