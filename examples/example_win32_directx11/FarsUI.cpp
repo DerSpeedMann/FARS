@@ -8,6 +8,7 @@
 
 //Modules
 #include "Module.h"
+#include "MatchingModule.h"
 #include "ImageConvertingModule.h"
 #include "FingerJetModule.h"
 #include "SourceAFIS_ExtModule.h"
@@ -47,10 +48,10 @@ namespace FarsUI
         std::make_unique<SourceAFIS_ExtModule>(),
         std::make_unique<Module>(),
     };
-    static std::unique_ptr<Module> MatchingModules[3] = {
+    static std::unique_ptr<MatchingModule> MatchingModules[3] = {
         std::make_unique<SourceAFIS_MatModule>(),
-        std::make_unique<Module>(),
-        std::make_unique<Module>(),
+        std::make_unique<MatchingModule>(),
+        std::make_unique<MatchingModule>(),
     };
 
     // Enroll View
@@ -85,7 +86,6 @@ namespace FarsUI
 
     void Run()
     {
-
         std::string out = "";
         bool *preprocessingSelection;
 
@@ -96,11 +96,17 @@ namespace FarsUI
         }
 
         if (enrollView) {
+            templateFile = "";
             activeFile = enrollInputImage;
             preprocessingSelection = enrollPreprocessingSelection;
         }
         else
         {
+            if (templateFile.empty())
+            {
+                std::cout << "No Fingerprint enrolled!\n";
+                return;
+            }
             if (matchingInputImage.empty())
             {
                 std::cout << "No matching Fingerprint selected!\n";
@@ -132,6 +138,8 @@ namespace FarsUI
             templateFile = out;
             return;
         }
+
+        (*MatchingModules[matchingSelectedMatchingModule]).SetTemplateFile(templateFile);
         (*MatchingModules[matchingSelectedMatchingModule]).Run(activeFile, &out);
 
         //TODO: get result

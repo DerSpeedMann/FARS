@@ -1,7 +1,7 @@
 #pragma once
-#include "Module.h"
+#include "MatchingModule.h"
 
-class SourceAFIS_MatModule : public Module
+class SourceAFIS_MatModule : public MatchingModule
 {
 public:
     SourceAFIS_MatModule();

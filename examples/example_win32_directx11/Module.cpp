@@ -23,6 +23,7 @@
         *out_outputFile = "";
         return true;
     }
+
     void Module::SetOutputFile(std::string fileName)
     {
         // TODO: check if file exists
