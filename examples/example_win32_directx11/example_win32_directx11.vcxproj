@@ -155,7 +155,7 @@
     <ClInclude Include="FarsUI.h" />
     <ClInclude Include="FingerJetModule.h" />
     <ClInclude Include="ImageConvertingModule.h" />
-    <ClInclude Include="ImageVisualiser.h" />
+    <ClInclude Include="ImageVisualizer.h" />
     <ClInclude Include="Module.h" />
     <ClInclude Include="ModuleCaller.h" />
     <ClInclude Include="stb_image.h" />
@@ -171,7 +171,7 @@
     <ClCompile Include="FarsUI.cpp" />
     <ClCompile Include="FingerJetModule.cpp" />
     <ClCompile Include="ImageConvertingModule.cpp" />
-    <ClCompile Include="ImageVisualiser.cpp" />
+    <ClCompile Include="ImageVisualizer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Module.cpp" />
     <ClCompile Include="ModuleCaller.cpp" />

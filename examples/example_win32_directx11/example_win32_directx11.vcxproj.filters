@@ -39,7 +39,7 @@
     <ClInclude Include="ModuleCaller.h">
       <Filter>sources\Fars</Filter>
     </ClInclude>
-    <ClInclude Include="ImageVisualiser.h">
+    <ClInclude Include="ImageVisualizer.h">
       <Filter>sources\Fars</Filter>
     </ClInclude>
     <ClInclude Include="stb_image.h">
@@ -86,7 +86,7 @@
     <ClCompile Include="ModuleCaller.cpp">
       <Filter>sources\Fars</Filter>
     </ClCompile>
-    <ClCompile Include="ImageVisualiser.cpp">
+    <ClCompile Include="ImageVisualizer.cpp">
       <Filter>sources\Fars</Filter>
     </ClCompile>
     <ClCompile Include="ImageConvertingModule.cpp">

@@ -4,7 +4,7 @@
 #include "Module.h"
 #include "FingerJetModule.h"
 #include "ImageConvertingModule.h"
-#include "ImageVisualiser.h"
+#include "ImageVisualizer.h"
 #include "imgui_impl_dx11.h"
 #include <locale>
 #include <codecvt>
@@ -41,7 +41,7 @@ namespace FarsUI
 
     void LoadInputImage(std::string imagePath)
     {
-        if (!ImageVisualiser::LoadTextureFromFile(imagePath.c_str(), &template_texture, &template_image_width, &template_image_height))
+        if (!ImageVisualizer::LoadTextureFromFile(imagePath.c_str(), &template_texture, &template_image_width, &template_image_height))
         {
             std::cout << printf("Loading Image failed!\n");
             return;
@@ -90,7 +90,7 @@ namespace FarsUI
         if (template_texture != NULL)
         {
             ImVec2 availSize = ImGui::GetContentRegionAvail();
-            ImVec2 imageSize = ImageVisualiser::CalculateResolution(template_image_width, template_image_height, availSize.x, availSize.y);
+            ImVec2 imageSize = ImageVisualizer::CalculateResolution(template_image_width, template_image_height, availSize.x, availSize.y);
 
             ImGui::Image((void*)template_texture, imageSize);
         }

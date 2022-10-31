@@ -8,7 +8,7 @@
 static ID3D11Device* g_pd3dDevice = NULL;
 static cv::ocl::Context m_oclCtx;
 
-void ImageVisualiser::DX11_Init(ID3D11Device* device)
+void ImageVisualizer::DX11_Init(ID3D11Device* device)
 {
     g_pd3dDevice = device;
     // initialize OpenCL context of OpenCV lib from DirectX
@@ -19,7 +19,7 @@ void ImageVisualiser::DX11_Init(ID3D11Device* device)
 
 }
 
-ImVec2 ImageVisualiser::CalculateResolution(int originalWidth, int originalHeight, int maxWidth, int maxHeight)
+ImVec2 ImageVisualizer::CalculateResolution(int originalWidth, int originalHeight, int maxWidth, int maxHeight)
 {
     int aspectRatio = originalHeight / originalWidth;
     ImVec2 newSize = ImVec2(originalWidth, originalHeight);
@@ -38,11 +38,11 @@ ImVec2 ImageVisualiser::CalculateResolution(int originalWidth, int originalHeigh
     return newSize;
 }
 
-bool ImageVisualiser::SaveImageToFile(const char* filename, cv::Mat img) {
+bool ImageVisualizer::SaveImageToFile(const char* filename, cv::Mat img) {
     return cv::imwrite(filename, img);
 }
 
-cv::Mat ImageVisualiser::LoadImageMatrixFromFile(const char* filename, int flags, int* out_width, int* out_height)
+cv::Mat ImageVisualizer::LoadImageMatrixFromFile(const char* filename, int flags, int* out_width, int* out_height)
 {
     cv::Mat src = cv::imread(filename, flags);
     *out_width = src.size().width;
@@ -50,7 +50,7 @@ cv::Mat ImageVisualiser::LoadImageMatrixFromFile(const char* filename, int flags
     return src;
 }
 
-bool ImageVisualiser::LoadTextureFromFile(const char* filename, ID3D11ShaderResourceView** out_srv, int* out_width, int* out_height)
+bool ImageVisualizer::LoadTextureFromFile(const char* filename, ID3D11ShaderResourceView** out_srv, int* out_width, int* out_height)
 {
     if (g_pd3dDevice == NULL)
     {

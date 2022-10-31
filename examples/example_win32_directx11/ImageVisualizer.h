@@ -7,7 +7,7 @@
 #include "opencv2/imgproc.hpp"
 #include <d3d11.h>
 
-class ImageVisualiser
+class ImageVisualizer
 {
 public:
     static ImVec2 CalculateResolution(int originalWidth, int originalHeight, int maxWidth, int maxHeight);

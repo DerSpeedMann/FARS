@@ -1,6 +1,6 @@
 #include "ImageConvertingModule.h"
 #include "ModuleCaller.h"
-#include "ImageVisualiser.h"
+#include "ImageVisualizer.h"
 #include <filesystem>
 #include <iostream>
 #include <string>
@@ -43,7 +43,7 @@ bool ImageConvertingModule::Run(std::string inputFile, std::string* out_outputFi
     
     int width, height;
     width = height = 0;
-    cv::Mat imageMatrix = ImageVisualiser::LoadImageMatrixFromFile(inputFile.c_str(), cv::IMREAD_GRAYSCALE, &width, &height);
+    cv::Mat imageMatrix = ImageVisualizer::LoadImageMatrixFromFile(inputFile.c_str(), cv::IMREAD_GRAYSCALE, &width, &height);
     if (imageMatrix.empty())
     {
         std::cout << "Could not load image file: " + inputFile;
@@ -54,7 +54,7 @@ bool ImageConvertingModule::Run(std::string inputFile, std::string* out_outputFi
 
     std::string outputPath = fingerprintPath + fileName + ImageFileTypes[selected];
 
-    if (!ImageVisualiser::SaveImageToFile(outputPath.c_str(), imageMatrix))
+    if (!ImageVisualizer::SaveImageToFile(outputPath.c_str(), imageMatrix))
     {
         std::cout << "Could not save image file: " + inputFile;
         return false;

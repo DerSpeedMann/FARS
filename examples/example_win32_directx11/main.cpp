@@ -95,7 +95,7 @@ int main(int, char**)
     //IM_ASSERT(font != NULL);
 
     // Init FARS Dependencies
-    ImageVisualiser::DX11_Init(g_pd3dDevice);
+    ImageVisualizer::DX11_Init(g_pd3dDevice);
 
     // Our state
     bool show_demo_window = true;
