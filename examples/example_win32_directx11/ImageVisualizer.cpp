@@ -1,5 +1,5 @@
 #define STB_IMAGE_IMPLEMENTATION
-#include "ImageVisualiser.h"
+#include "ImageVisualizer.h"
 #include <iostream>
 #include <fstream>
 

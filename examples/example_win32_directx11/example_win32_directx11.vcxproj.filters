@@ -13,6 +13,9 @@
     <Filter Include="sources\Fars\Modules">
       <UniqueIdentifier>{9d96fa21-aeaf-4647-8171-7b7230a1fb69}</UniqueIdentifier>
     </Filter>
+    <Filter Include="sources\Fars\Helpers">
+      <UniqueIdentifier>{841444b9-627e-44b9-9d91-2eb7ff05c4d1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\imconfig.h">
@@ -36,12 +39,6 @@
     <ClInclude Include="Module.h">
       <Filter>sources\Fars\Modules</Filter>
     </ClInclude>
-    <ClInclude Include="ModuleCaller.h">
-      <Filter>sources\Fars</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageVisualizer.h">
-      <Filter>sources\Fars</Filter>
-    </ClInclude>
     <ClInclude Include="stb_image.h">
       <Filter>sources\Fars</Filter>
     </ClInclude>
@@ -50,6 +47,12 @@
     </ClInclude>
     <ClInclude Include="ImageConvertingModule.h">
       <Filter>sources\Fars\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleCaller.h">
+      <Filter>sources\Fars\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageVisualizer.h">
+      <Filter>sources\Fars\Helpers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -83,17 +86,17 @@
     <ClCompile Include="Module.cpp">
       <Filter>sources\Fars\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleCaller.cpp">
-      <Filter>sources\Fars</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageVisualizer.cpp">
-      <Filter>sources\Fars</Filter>
-    </ClCompile>
     <ClCompile Include="ImageConvertingModule.cpp">
       <Filter>sources\Fars\Modules</Filter>
     </ClCompile>
     <ClCompile Include="FingerJetModule.cpp">
       <Filter>sources\Fars\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleCaller.cpp">
+      <Filter>sources\Fars\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageVisualizer.cpp">
+      <Filter>sources\Fars\Helpers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
