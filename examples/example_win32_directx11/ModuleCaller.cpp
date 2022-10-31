@@ -6,6 +6,7 @@
 #include <windows.h>
 #include <codecvt>
 
+
 namespace ModuleCaller
 {
     static const std::wstring ModulePath = L"\\Modules\\";
@@ -23,7 +24,6 @@ namespace ModuleCaller
         }
         return ExePath;
     }
-
     std::wstring GetTmpPath()
     {
         return GetExePath() + TempPath;

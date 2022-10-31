@@ -8,7 +8,7 @@
 #include <d3d11.h>
 #include <tchar.h>
 
-#include "ImageVisualiser.h"
+#include "ImageVisualizer.h"
 #include "FarsUI.h"
 
 // Data

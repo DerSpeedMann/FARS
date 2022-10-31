@@ -39,9 +39,6 @@
     <ClInclude Include="Module.h">
       <Filter>sources\Fars\Modules</Filter>
     </ClInclude>
-    <ClInclude Include="stb_image.h">
-      <Filter>sources\Fars</Filter>
-    </ClInclude>
     <ClInclude Include="FingerJetModule.h">
       <Filter>sources\Fars\Modules</Filter>
     </ClInclude>
@@ -53,6 +50,15 @@
     </ClInclude>
     <ClInclude Include="ImageVisualizer.h">
       <Filter>sources\Fars\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image.h">
+      <Filter>sources\Fars\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceAFIS_ExtModule.h">
+      <Filter>sources\Fars\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceAFIS_MatModule.h">
+      <Filter>sources\Fars\Modules</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -97,6 +103,12 @@
     </ClCompile>
     <ClCompile Include="ImageVisualizer.cpp">
       <Filter>sources\Fars\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceAFIS_ExtModule.cpp">
+      <Filter>sources\Fars\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceAFIS_MatModule.cpp">
+      <Filter>sources\Fars\Modules</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

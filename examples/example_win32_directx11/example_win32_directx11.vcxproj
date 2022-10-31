@@ -158,6 +158,8 @@
     <ClInclude Include="ImageVisualizer.h" />
     <ClInclude Include="Module.h" />
     <ClInclude Include="ModuleCaller.h" />
+    <ClInclude Include="SourceAFIS_ExtModule.h" />
+    <ClInclude Include="SourceAFIS_MatModule.h" />
     <ClInclude Include="stb_image.h" />
   </ItemGroup>
   <ItemGroup>
@@ -175,6 +177,8 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Module.cpp" />
     <ClCompile Include="ModuleCaller.cpp" />
+    <ClCompile Include="SourceAFIS_ExtModule.cpp" />
+    <ClCompile Include="SourceAFIS_MatModule.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\misc\debuggers\imgui.natvis" />

@@ -1,11 +1,17 @@
 #include "FarsUI.h"
 #include "imgui.h"
-#include "ModuleCaller.h"
-#include "Module.h"
-#include "FingerJetModule.h"
-#include "ImageConvertingModule.h"
-#include "ImageVisualizer.h"
 #include "imgui_impl_dx11.h"
+
+//Helpers
+#include "ModuleCaller.h"
+#include "ImageVisualizer.h"
+
+//Modules
+#include "Module.h"
+#include "ImageConvertingModule.h"
+#include "FingerJetModule.h"
+#include "SourceAFIS_ExtModule.h"
+
 #include <locale>
 #include <codecvt>
 #include <string>
@@ -16,53 +22,61 @@
 namespace FarsUI
 {
 
-    std::string InputImage;
+    std::string enrollInputImage;
+    std::string templateFile;
 
-    int template_image_width = 0;
-    int template_image_height = 0;
-    ID3D11ShaderResourceView* template_texture = NULL;
+    int enroll_image_width = 0;
+    int enroll_image_height = 0;
+    ID3D11ShaderResourceView* enroll_texture = NULL;
+
+    int matching_image_width = 0;
+    int matching_image_height = 0;
+    ID3D11ShaderResourceView* matching_texture = NULL;
 
     
     static std::unique_ptr<Module> PreprocessingModules[3] = {
         std::make_unique<ImageConvertingModule>(),
-        std::make_unique<Module>(),
+        std::make_unique<SourceAFIS_ExtModule>(),
         std::make_unique<Module>(),
     };
-    static bool preprocessingSelection[IM_ARRAYSIZE(PreprocessingModules)] = {};
+    static bool enrollPreprocessingSelection[IM_ARRAYSIZE(PreprocessingModules)] = {};
+    static bool matchingPreprocessingSelection[IM_ARRAYSIZE(PreprocessingModules)] = {};
 
     static std::unique_ptr<Module> ExtractionModules[3] = {
         std::make_unique<FingerJetModule>(),
         std::make_unique<Module>(),
         std::make_unique<Module>(),
     };
-    static int selectedExtractionModule = 0;
+    static int enrollSelectedExtractionModule = 0;
+    static int matchingSelectedExtractionModule = 0;
     
     std::string activeFile;
+    bool matchingView = true;
 
     void LoadInputImage(std::string imagePath)
     {
-        if (!ImageVisualizer::LoadTextureFromFile(imagePath.c_str(), &template_texture, &template_image_width, &template_image_height))
+        if (!ImageVisualizer::LoadTextureFromFile(imagePath.c_str(), &enroll_texture, &enroll_image_width, &enroll_image_height))
         {
             std::cout << printf("Loading Image failed!\n");
             return;
         }
         
-        InputImage = imagePath;
+        enrollInputImage = imagePath;
     }
 
     void Run()
     {
-        if (InputImage.empty())
+        if (enrollInputImage.empty())
         {
             std::cout << "No Fingerprint selected!\n";
             return;
         }
 
         std::string out = "";
-        activeFile = InputImage;
+        activeFile = enrollInputImage;
         for (int i = 0; i < IM_ARRAYSIZE(PreprocessingModules); i++)
         {
-            if (!preprocessingSelection[i])
+            if (!enrollPreprocessingSelection[i])
             {
                 continue;
             }
@@ -75,11 +89,28 @@ namespace FarsUI
             activeFile = out;
         }
 
-        (*ExtractionModules[selectedExtractionModule]).Run(activeFile, &out);
+        (*ExtractionModules[enrollSelectedExtractionModule]).Run(activeFile, &out);
+
+        if (matchingView) {
+            templateFile = out;
+            return;
+        }
+
+
     }
 
     void RenderUI()
     {
+        RenderInput();
+
+        RenderPreprocessing();
+
+        RenderExtraction();
+
+        RenderControl();
+    }
+
+    void RenderInput() {
         static char buf[128] = "Debug/Fingerprints/a001_03p.pgm";
         ImGui::Begin("FingerprintImage");
         ImGui::InputText("FilePath", buf, IM_ARRAYSIZE(buf));
@@ -87,20 +118,14 @@ namespace FarsUI
         {
             LoadInputImage(buf);
         }
-        if (template_texture != NULL)
+        if (enroll_texture != NULL)
         {
             ImVec2 availSize = ImGui::GetContentRegionAvail();
-            ImVec2 imageSize = ImageVisualizer::CalculateResolution(template_image_width, template_image_height, availSize.x, availSize.y);
+            ImVec2 imageSize = ImageVisualizer::CalculateResolution(enroll_image_width, enroll_image_height, availSize.x, availSize.y);
 
-            ImGui::Image((void*)template_texture, imageSize);
+            ImGui::Image((void*)enroll_texture, imageSize);
         }
         ImGui::End();
-
-        RenderPreprocessing();
-
-        RenderExtraction();
-
-        RenderControl();
     }
 
     void RenderExtraction()
@@ -112,9 +137,9 @@ namespace FarsUI
         {
             for (int n = 0; n < IM_ARRAYSIZE(ExtractionModules); n++)
             {
-                const bool is_selected = (selectedExtractionModule == n);
+                const bool is_selected = (enrollSelectedExtractionModule == n);
                 if (ImGui::Selectable((*ExtractionModules[n]).GetModuleName().c_str(), is_selected))
-                    selectedExtractionModule = n;
+                    enrollSelectedExtractionModule = n;
 
                 // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
                 if (is_selected)
@@ -124,8 +149,8 @@ namespace FarsUI
         }
         ImGui::Text("Selected Module:");
 
-        ImGui::CollapsingHeader((*ExtractionModules[selectedExtractionModule]).GetModuleName().c_str(), ImGuiTreeNodeFlags_Leaf);
-        (*ExtractionModules[selectedExtractionModule]).Render();
+        ImGui::CollapsingHeader((*ExtractionModules[enrollSelectedExtractionModule]).GetModuleName().c_str(), ImGuiTreeNodeFlags_Leaf);
+        (*ExtractionModules[enrollSelectedExtractionModule]).Render();
         ImGui::End();
     }
     void RenderPreprocessing()
@@ -137,9 +162,9 @@ namespace FarsUI
         {
             for (int n = 0; n < IM_ARRAYSIZE(PreprocessingModules); n++)
             {
-                if (ImGui::Selectable((*PreprocessingModules[n]).GetModuleName().c_str(), preprocessingSelection[n]))
+                if (ImGui::Selectable((*PreprocessingModules[n]).GetModuleName().c_str(), enrollPreprocessingSelection[n]))
                 {
-                    preprocessingSelection[n] ^= 1;
+                    enrollPreprocessingSelection[n] ^= 1;
                 }
             }
             ImGui::EndListBox();
@@ -149,7 +174,7 @@ namespace FarsUI
         // Simple reordering
         for (int n = 0; n < IM_ARRAYSIZE(PreprocessingModules); n++)
         {
-            if (!preprocessingSelection[n])
+            if (!enrollPreprocessingSelection[n])
             {
                 continue;
             }

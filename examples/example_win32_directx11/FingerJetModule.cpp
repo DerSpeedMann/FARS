@@ -15,10 +15,7 @@ FingerJetModule::FingerJetModule()
 
 void FingerJetModule::Render()  
 {
-    float value = 0.0f;
-    int value2 = 0;
-    ImGui::DragFloat("Value", &value);
-    ImGui::DragInt("Value2", &value2);
+
 }
 
 bool FingerJetModule::Run(std::string inputFile, std::string* out_outputFile) {
