@@ -27,6 +27,7 @@ namespace FarsUI
     std::string templateFile;
 
     std::string activeFile;
+    std::string matchingScore = "0";
     bool enrollView = true;
 
     char* viewModeText[2] = { "Matching View", "Enroll View" };
@@ -87,6 +88,7 @@ namespace FarsUI
     void Run()
     {
         std::string out = "";
+        matchingScore = "0";
         bool *preprocessingSelection;
 
         if (enrollInputImage.empty())
@@ -127,12 +129,15 @@ namespace FarsUI
             if (!(*PreprocessingModules[i]).Run(activeFile, &out))
             {
                 //TODO: visualise error
-                continue;
+                return;
             }
             activeFile = out;
         }
 
-        (*ExtractionModules[enrollSelectedExtractionModule]).Run(activeFile, &out);
+        if ((*ExtractionModules[enrollSelectedExtractionModule]).Run(activeFile, &out))
+        {
+            return;
+        }
 
         if (enrollView) {
             templateFile = out;
@@ -140,9 +145,13 @@ namespace FarsUI
         }
 
         (*MatchingModules[matchingSelectedMatchingModule]).SetTemplateFile(templateFile);
-        (*MatchingModules[matchingSelectedMatchingModule]).Run(activeFile, &out);
+        if ((*MatchingModules[matchingSelectedMatchingModule]).Run(activeFile, &out))
+        {
+            return;
+        }
 
-        //TODO: get result
+        double score = (*MatchingModules[matchingSelectedMatchingModule]).GetResult();
+        matchingScore = std::to_string(score).c_str();
     }
 
     void RenderUI()
@@ -338,6 +347,10 @@ namespace FarsUI
         {
             enrollView ^= true;
         }
+
+        std::ostringstream scoreText;
+        scoreText << "Match Score: " << matchingScore.c_str();
+        ImGui::Text(scoreText.str().c_str());
         ImGui::End();
     }
 };

@@ -156,6 +156,8 @@
     <ClInclude Include="FingerJetModule.h" />
     <ClInclude Include="ImageConvertingModule.h" />
     <ClInclude Include="ImageVisualizer.h" />
+    <ClInclude Include="json.hpp" />
+    <ClInclude Include="MatchingModule.h" />
     <ClInclude Include="Module.h" />
     <ClInclude Include="ModuleCaller.h" />
     <ClInclude Include="SourceAFIS_ExtModule.h" />
@@ -175,6 +177,7 @@
     <ClCompile Include="ImageConvertingModule.cpp" />
     <ClCompile Include="ImageVisualizer.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MatchingModule.cpp" />
     <ClCompile Include="Module.cpp" />
     <ClCompile Include="ModuleCaller.cpp" />
     <ClCompile Include="SourceAFIS_ExtModule.cpp" />
