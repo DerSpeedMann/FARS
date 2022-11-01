@@ -9,8 +9,9 @@
 FingerJetModule::FingerJetModule()
 {
     ModuleName = "FingerJetFXOSE";
-    OutputFile = "fjfx01.ist";
-    ModuleExecutable = L"fjfxSample.exe";
+    OutputFileNames[0] = "fjfx01_Matching.ist";
+    OutputFileNames[0] = "fjfx01_Enroll.ist";
+    ModuleExecutable = "fjfxSample.exe";
 }
 
 void FingerJetModule::Render()  
@@ -18,14 +19,16 @@ void FingerJetModule::Render()
 
 }
 
-bool FingerJetModule::Run(std::string inputFile, std::string* out_outputFile) {
+bool FingerJetModule::Run(std::string inputFilePath, bool enrollMode, std::string* out_outputFilePath) {
 
-    std::wstring parameters = ModuleCaller::stringConvert(inputFile) + L" " + ModuleCaller::GetTmpPath() + ModuleCaller::stringConvert(OutputFile);
+    std::string outPath = ModuleCaller::GetTmpPath() + OutputFileNames[enrollMode];
+   
+    std::string parameters = inputFilePath + " " + outPath;
     int exitCode = ModuleCaller::CallModule(ModuleCaller::GetModulePath() + ModuleExecutable, parameters);
     if (exitCode != 0)
     {
         std::cout << printf("Program closed with error %d!\n", exitCode);
     };
-    *out_outputFile = OutputFile;
+    *out_outputFilePath = outPath;
     return exitCode != 0;
 }

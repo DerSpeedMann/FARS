@@ -13,6 +13,6 @@ public:
 protected:
     std::string ModuleName = "GenericModuleName";
     std::string OutputFileNames[2];
-    std::wstring ModuleExecutable;
+    std::string ModuleExecutable;
 };
 

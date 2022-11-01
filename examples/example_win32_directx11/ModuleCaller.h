@@ -3,12 +3,12 @@
 
 namespace ModuleCaller
 {
-    std::wstring GetExePath();
-    std::wstring GetTmpPath();
-    std::wstring GetFingerprintsPath();
-    std::wstring GetModulePath();
+    std::string GetExePath();
+    std::string GetTmpPath();
+    std::string GetFingerprintsPath();
+    std::string GetModulePath();
+    std::string stringConvert(std::wstring wstring);
     std::wstring stringConvert(std::string string);
-    std::string stringConvert(std::wstring string);
-    int CallModule(std::wstring executablePath, std::wstring parameters);
+    int CallModule(std::string executablePath, std::string parameters);
 };
 

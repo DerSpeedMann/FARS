@@ -11,30 +11,30 @@
 
 namespace ModuleCaller
 {
-    static const std::wstring ModulePath = L"\\Modules\\";
-    static const std::wstring FingerprintPath = L"\\Fingerprints\\";
-    static const std::wstring TempPath = L"\\tmp\\";
-    static std::wstring ExePath;
+    static const std::string ModulePath = "\\Modules\\";
+    static const std::string FingerprintPath = "\\Fingerprints\\";
+    static const std::string TempPath = "\\tmp\\";
+    static std::string ExePath;
 
-    std::wstring GetExePath() {
+    std::string GetExePath() {
         if (ExePath.empty())
         {
             TCHAR buffer[MAX_PATH + 1] = L"";
             GetModuleFileName(NULL, buffer, MAX_PATH);
             std::wstring::size_type pos = std::wstring(buffer).find_last_of(L"\\/");
-            ExePath = std::wstring(buffer).substr(0, pos);
+            ExePath = stringConvert(std::wstring(buffer).substr(0, pos));
         }
         return ExePath;
     }
-    std::wstring GetTmpPath()
+    std::string GetTmpPath()
     {
         return GetExePath() + TempPath;
     }
-    std::wstring GetFingerprintsPath()
+    std::string GetFingerprintsPath()
     {
         return GetExePath() + FingerprintPath;
     }
-    std::wstring GetModulePath()
+    std::string GetModulePath()
     {
         return GetExePath() + ModulePath;
     }
@@ -48,17 +48,17 @@ namespace ModuleCaller
         return converter.from_bytes(string);
     }
 
-    int CallModule(std::wstring executablePath, std::wstring parameters)
+    int CallModule(std::string executablePath, std::string parameters)
     {
         // additional information
         STARTUPINFO si{ sizeof(si) };
         PROCESS_INFORMATION pi;
 
         DWORD exitCode;
-        std::wstring fullParameters = executablePath + L" " + parameters;
+        std::wstring fullParameters = stringConvert(executablePath + " " + parameters);
 
         // start the program up
-        if ( !CreateProcess(executablePath.c_str(),   // the path
+        if ( !CreateProcess(stringConvert(executablePath).c_str(),   // the path
             LPWSTR(fullParameters.c_str()),       // Parameters
             NULL,           // Process handle not inheritable
             NULL,           // Thread handle not inheritable
@@ -73,8 +73,8 @@ namespace ModuleCaller
             printf("CreateProcess failed (%d).\n", GetLastError());
             return -1;
         }
-        std::string path = stringConvert(executablePath);
-        std::string base_filename = path.substr(path.find_last_of("/\\") + 1);
+
+        std::string base_filename = executablePath.substr(executablePath.find_last_of("/\\") + 1);
 
         std::cout << "started programm " + base_filename + "\n";
         

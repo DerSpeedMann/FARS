@@ -17,7 +17,7 @@ ImageConvertingModule::ImageConvertingModule()
     ModuleName = "ImageConverter";
     OutputFileNames[0] = "opencv2_Matching.";
     OutputFileNames[1] = "opencv2_Enrool.";
-    ModuleExecutable = L"";
+    ModuleExecutable = "";
 }
 
 void ImageConvertingModule::Render()
@@ -51,7 +51,7 @@ bool ImageConvertingModule::Run(std::string inputFile, bool enrollMode, std::str
         return false;
     }
 
-    std::string fingerprintPath = ModuleCaller::stringConvert(ModuleCaller::GetFingerprintsPath());
+    std::string fingerprintPath = ModuleCaller::GetFingerprintsPath();
 
     std::string outputPath = fingerprintPath + OutputFileNames[enrollMode] + ImageFileTypes[selected];
 
