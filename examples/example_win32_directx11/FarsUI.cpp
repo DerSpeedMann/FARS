@@ -129,7 +129,7 @@ namespace FarsUI
                 continue;
             }
 
-            if (!(*PreprocessingModules[i]).Run(activeFile, &out))
+            if (!(*PreprocessingModules[i]).Run(activeFile, enrollView, &out))
             {
                 std::cout << "Running Preprocessing Module Failed!\n";
                 //TODO: visualise error
@@ -138,7 +138,7 @@ namespace FarsUI
             activeFile = out;
         }
 
-        if ((*ExtractionModules[selectedExtractionModule]).Run(activeFile, &out))
+        if ((*ExtractionModules[selectedExtractionModule]).Run(activeFile, enrollView, &out))
         {
             std::cout << "Running Extraction Module Failed!\n";
             return;
@@ -151,8 +151,7 @@ namespace FarsUI
             return;
         }
 
-        (*MatchingModules[matchingSelectedMatchingModule]).SetTemplateFile(templateFile);
-        if ((*MatchingModules[matchingSelectedMatchingModule]).Run(activeFile, &out))
+        if ((*MatchingModules[matchingSelectedMatchingModule]).Run(activeFile, templateFile, &out))
         {
             std::cout << "Running Matching Module Failed!\n";
             return;

@@ -15,3 +15,13 @@ double MatchingModule::GetResult()
     return 0;
 }
 
+std::string MatchingModule::GetModuleName()
+{
+    std::string name = "##";
+    if (!ModuleName.empty())
+    {
+        name = ModuleName;
+    }
+
+    return name;
+}

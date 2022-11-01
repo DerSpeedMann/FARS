@@ -80,13 +80,13 @@ int main(int, char**)
     ImGui_ImplWin32_Init(hwnd);
     ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dDeviceContext);
 
-    if (CreateDirectory(ModuleCaller::GetTmpPath().c_str(), NULL)) {
+    if (CreateDirectory(ModuleCaller::stringConvert(ModuleCaller::GetTmpPath()).c_str(), NULL)) {
         std::cout << "Could not create Modules folder!";
     }
-    if(CreateDirectory(ModuleCaller::GetFingerprintsPath().c_str(), NULL)) {
+    if(CreateDirectory(ModuleCaller::stringConvert(ModuleCaller::GetFingerprintsPath()).c_str(), NULL)) {
         std::cout << "Could not create Fingerprints folder!";
     }
-    if (!CreateDirectory(ModuleCaller::GetTmpPath().c_str(), NULL)) {
+    if (!CreateDirectory(ModuleCaller::stringConvert(ModuleCaller::GetTmpPath()).c_str(), NULL)) {
         std::cout << "Could not create tmp folder!";
     }
 
