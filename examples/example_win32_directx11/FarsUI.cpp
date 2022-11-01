@@ -75,9 +75,9 @@ namespace FarsUI
     static int matchingSelectedMatchingModule = 0;
 
 
-    bool LoadInputImage(std::string imagePath)
+    bool LoadInputImage(std::string imagePath, ID3D11ShaderResourceView** out_srv, int* out_width, int* out_height)
     {
-        if (!ImageVisualizer::LoadTextureFromFile(imagePath.c_str(), &enroll_texture, &enroll_image_width, &enroll_image_height))
+        if (!ImageVisualizer::LoadTextureFromFile(imagePath.c_str(), out_srv, out_width, out_height))
         {
             std::cout << printf("Loading Image failed!\n");
             return false;
@@ -90,6 +90,7 @@ namespace FarsUI
         std::string out = "";
         matchingScore = "0";
         bool *preprocessingSelection;
+        int selectedExtractionModule;
 
         if (enrollInputImage.empty())
         {
@@ -101,6 +102,7 @@ namespace FarsUI
             templateFile = "";
             activeFile = enrollInputImage;
             preprocessingSelection = enrollPreprocessingSelection;
+            selectedExtractionModule = enrollSelectedExtractionModule;
         }
         else
         {
@@ -116,6 +118,7 @@ namespace FarsUI
             }
             activeFile = matchingInputImage;
             preprocessingSelection = matchingPreprocessingSelection;
+            selectedExtractionModule = matchingSelectedExtractionModule;
 
         }
         
@@ -128,25 +131,30 @@ namespace FarsUI
 
             if (!(*PreprocessingModules[i]).Run(activeFile, &out))
             {
+                std::cout << "Running Preprocessing Module Failed!\n";
                 //TODO: visualise error
                 return;
             }
             activeFile = out;
         }
 
-        if ((*ExtractionModules[enrollSelectedExtractionModule]).Run(activeFile, &out))
+        if ((*ExtractionModules[selectedExtractionModule]).Run(activeFile, &out))
         {
+            std::cout << "Running Extraction Module Failed!\n";
             return;
         }
+        activeFile = out;
 
         if (enrollView) {
             templateFile = out;
+            std::cout << "Enrolled Fingerprint!\n";
             return;
         }
 
         (*MatchingModules[matchingSelectedMatchingModule]).SetTemplateFile(templateFile);
         if ((*MatchingModules[matchingSelectedMatchingModule]).Run(activeFile, &out))
         {
+            std::cout << "Running Matching Module Failed!\n";
             return;
         }
 
@@ -189,15 +197,15 @@ namespace FarsUI
 
         if (ImGui::CollapsingHeader("Enrolled Image", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_DefaultOpen))
         {
-            ImGui::InputText("FilePath", enrollInputBuffer, IM_ARRAYSIZE(enrollInputBuffer), fileLoadInputFlags[enrollView]);
-            if (ImGui::Button("LoadImage") && LoadInputImage(enrollInputBuffer))
+            ImGui::InputText("File Path", enrollInputBuffer, IM_ARRAYSIZE(enrollInputBuffer), fileLoadInputFlags[enrollView]);
+            if (ImGui::Button("Load Image") && LoadInputImage(enrollInputBuffer, &enroll_texture, &enroll_image_width, &enroll_image_height))
             {
                 enrollInputImage = enrollInputBuffer;
             }
             if (enroll_texture != NULL)
             {
                 ImVec2 availSize = ImGui::GetContentRegionAvail();
-                ImVec2 imageSize = ImageVisualizer::CalculateResolution(enroll_image_width, enroll_image_height, availSize.x, availSize.y);
+                ImVec2 imageSize = ImageVisualizer::CalculateResolution(enroll_image_width, enroll_image_height, availSize.x, availSize.y / 2);
 
                 ImGui::Image((void*)enroll_texture, imageSize);
             }
@@ -210,8 +218,8 @@ namespace FarsUI
         }
 
         if (ImGui::CollapsingHeader("Matching Image", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_DefaultOpen)) {
-            ImGui::InputText("FilePath", matchingInputBuffer, IM_ARRAYSIZE(matchingInputBuffer), fileLoadInputFlags[!enrollView]);
-            if (ImGui::Button("LoadImage") && LoadInputImage(matchingInputBuffer))
+            ImGui::InputText("Matching File Path", matchingInputBuffer, IM_ARRAYSIZE(matchingInputBuffer), fileLoadInputFlags[!enrollView]);
+            if (ImGui::Button("Load Matching Image") && LoadInputImage(matchingInputBuffer, &matching_texture, &matching_image_width, &matching_image_height))
             {
                 matchingInputImage = matchingInputBuffer;
             }
@@ -335,7 +343,7 @@ namespace FarsUI
     }
     void RenderControl()
     {
-        ImGui::Begin("ControlPanel");
+        ImGui::Begin("Control Panel");
         ImGui::Text(viewModeText[enrollView]);
 
         if (ImGui::Button(runBText[enrollView]))

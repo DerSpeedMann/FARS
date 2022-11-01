@@ -11,7 +11,7 @@
 SourceAFIS_MatModule::SourceAFIS_MatModule()
 {
     ModuleName = "SourceAFIS Matcher";
-    OutputFile = "SourceAFIS_Score.json";
+    OutputFileName = "SourceAFIS_Score.json";
     ModuleExecutable = L"SourceAfis-Tool.exe";
 }
 
@@ -20,36 +20,26 @@ void SourceAFIS_MatModule::Render()
 
 }
 
-bool SourceAFIS_MatModule::Run(std::string inputFile, std::string* out_outputFile) {
+bool SourceAFIS_MatModule::Run(std::string inputFilePath, std::string enrolledTemplatePath, std::string* out_outputFilePath) {
 
-    if (TemplateFile.empty())
-    {
-        std::cout << printf("Template path is not set!");
-        return false;
-    }
+    std::wstring outPath = ModuleCaller::GetTmpPath() + ModuleCaller::stringConvert(OutputFileName);
 
-    std::wstring parameters = L" -m " + ModuleCaller::stringConvert(inputFile) + L" " +
-        ModuleCaller::GetTmpPath() + ModuleCaller::stringConvert(TemplateFile) + L" " +
-        ModuleCaller::GetTmpPath() + ModuleCaller::stringConvert(OutputFile);
+    std::wstring parameters = L" -m " + ModuleCaller::stringConvert(inputFilePath) + L" " +
+                                ModuleCaller::stringConvert(enrolledTemplatePath) + L" " + outPath;
+
     int exitCode = ModuleCaller::CallModule(ModuleCaller::GetModulePath() + ModuleExecutable, parameters);
     if (exitCode != 0)
     {
         std::cout << printf("Program closed with error %d!\n", exitCode);
     };
-    *out_outputFile = OutputFile;
+
+    *out_outputFilePath = ModuleCaller::stringConvert(outPath);
     return exitCode != 0;
 }
 
 double SourceAFIS_MatModule::GetResult()
 {
-    if (OutputFile.empty())
-    {
-        std::cout << printf("OutputFile path is not set!");
-        return 0;
-    }
-
-    std::ifstream f(OutputFile);
+    std::ifstream f(ModuleCaller::stringConvert(ModuleCaller::GetTmpPath()) + OutputFileName);
     double score = nlohmann::json::parse(f);
-
     return score;
 }

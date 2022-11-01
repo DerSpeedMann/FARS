@@ -1,8 +1,13 @@
 #include "MatchingModule.h"
+#include <imgui.h>
 
-void MatchingModule::SetTemplateFile(std::string fileName)
+bool MatchingModule::Run(std::string inputFilePath, std::string enrolledTemplatePath, std::string* out_outputFilePath)
 {
-    TemplateFile = fileName;
+    return true;
+}
+void MatchingModule::Render()
+{
+    ImGui::Text("Generic Details");
 }
 
 double MatchingModule::GetResult()

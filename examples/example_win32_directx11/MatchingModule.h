@@ -1,12 +1,15 @@
 #pragma once
 #include "Module.h"
 
-class MatchingModule : public Module
+class MatchingModule
 {
 public:
-    void SetTemplateFile(std::string fileName);
+    virtual bool Run(std::string inputFilePath, std::string enrolledTemplatePath, std::string* out_outputFilePath);
+    virtual void Render();
     double virtual GetResult();
 protected:
-    std::string TemplateFile;
+    std::string ModuleName = "GenericModuleName";
+    std::string OutputFileName;
+    std::wstring ModuleExecutable;
 };
 

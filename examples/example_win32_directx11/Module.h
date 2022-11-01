@@ -7,15 +7,12 @@ public:
     Module();
     ~Module();
     virtual void Render();
-    virtual bool Run(std::string inputFile, std::string* out_outputFile);
-    std::string GetOutputFile();
+    virtual bool Run(std::string inputFilePath, bool enrollMode, std::string* out_outputFilePath);
     std::string GetModuleName();
 
 protected:
     std::string ModuleName = "GenericModuleName";
-    std::string OutputFile;
+    std::string OutputFileNames[2];
     std::wstring ModuleExecutable;
-
-    void SetOutputFile(std::string fileName);
 };
 

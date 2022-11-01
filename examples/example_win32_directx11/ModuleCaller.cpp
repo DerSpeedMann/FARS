@@ -5,6 +5,8 @@
 #include <iostream>
 #include <windows.h>
 #include <codecvt>
+#include <stdio.h>
+#include <psapi.h>
 
 
 namespace ModuleCaller
@@ -71,8 +73,11 @@ namespace ModuleCaller
             printf("CreateProcess failed (%d).\n", GetLastError());
             return -1;
         }
+        std::string path = stringConvert(executablePath);
+        std::string base_filename = path.substr(path.find_last_of("/\\") + 1);
 
-        std::wcout << L"started programm " + executablePath + L"\n";
+        std::cout << "started programm " + base_filename + "\n";
+        
         WaitForSingleObject(pi.hProcess, INFINITE);
         GetExitCodeProcess(pi.hProcess, &exitCode);
 

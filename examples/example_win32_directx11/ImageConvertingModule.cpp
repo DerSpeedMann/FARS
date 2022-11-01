@@ -15,7 +15,8 @@ static std::string ImageFileTypes[]{ "bmp", "pbm", "pgm", "ppm", "sr", "ras", "j
 ImageConvertingModule::ImageConvertingModule()
 {
     ModuleName = "ImageConverter";
-    OutputFile = "";
+    OutputFileNames[0] = "opencv2_Matching.";
+    OutputFileNames[1] = "opencv2_Enrool.";
     ModuleExecutable = L"";
 }
 
@@ -38,7 +39,7 @@ void ImageConvertingModule::Render()
     }
 }
 
-bool ImageConvertingModule::Run(std::string inputFile, std::string* out_outputFile)
+bool ImageConvertingModule::Run(std::string inputFile, bool enrollMode, std::string* out_outputFile)
 {
     
     int width, height;
@@ -52,13 +53,13 @@ bool ImageConvertingModule::Run(std::string inputFile, std::string* out_outputFi
 
     std::string fingerprintPath = ModuleCaller::stringConvert(ModuleCaller::GetFingerprintsPath());
 
-    std::string outputPath = fingerprintPath + fileName + ImageFileTypes[selected];
+    std::string outputPath = fingerprintPath + OutputFileNames[enrollMode] + ImageFileTypes[selected];
 
     if (!ImageVisualizer::SaveImageToFile(outputPath.c_str(), imageMatrix))
     {
         std::cout << "Could not save image file: " + inputFile;
         return false;
     }
-    *out_outputFile = OutputFile = outputPath;
+    *out_outputFile = outputPath;
     return true;
 }

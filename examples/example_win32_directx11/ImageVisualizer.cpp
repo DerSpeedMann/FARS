@@ -86,7 +86,8 @@ bool ImageVisualizer::LoadTextureFromFile(const char* filename, ID3D11ShaderReso
     HRESULT r = g_pd3dDevice->CreateTexture2D(&desc, 0, &pTexture);
     if (FAILED(r))
     {
-        throw std::runtime_error("Can't create DX11 texture\n");
+        std::cout << "Can't create DX11 texture\n";
+        return false;
     }
 
     cv::directx::convertToD3D11Texture2D(RGBAMat, pTexture);
