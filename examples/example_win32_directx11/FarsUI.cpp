@@ -39,20 +39,15 @@ namespace FarsUI
     static char enrollInputBuffer[128] = "Debug/Fingerprints/a001_03p.pgm";
     static char matchingInputBuffer[128] = "Debug/Fingerprints/a001_03p.pgm";
     
-    static std::unique_ptr<Module> PreprocessingModules[3] = {
+    static std::unique_ptr<Module> PreprocessingModules[1] = {
         std::make_unique<ImageConvertingModule>(),
-        std::make_unique<Module>(),
-        std::make_unique<Module>(),
     };
-    static std::unique_ptr<Module> ExtractionModules[3] = {
+    static std::unique_ptr<Module> ExtractionModules[2] = {
         std::make_unique<FingerJetModule>(),
         std::make_unique<SourceAFIS_ExtModule>(),
-        std::make_unique<Module>(),
     };
-    static std::unique_ptr<MatchingModule> MatchingModules[3] = {
+    static std::unique_ptr<MatchingModule> MatchingModules[1] = {
         std::make_unique<SourceAFIS_MatModule>(),
-        std::make_unique<MatchingModule>(),
-        std::make_unique<MatchingModule>(),
     };
 
     // Enroll View
@@ -196,10 +191,12 @@ namespace FarsUI
 
         if (ImGui::CollapsingHeader("Enrolled Image", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_DefaultOpen))
         {
-            ImGui::InputText("File Path", enrollInputBuffer, IM_ARRAYSIZE(enrollInputBuffer), fileLoadInputFlags[enrollView]);
-            if (ImGui::Button("Load Image") && LoadInputImage(enrollInputBuffer, &enroll_texture, &enroll_image_width, &enroll_image_height))
-            {
-                enrollInputImage = enrollInputBuffer;
+            if (enrollView) {
+                ImGui::InputText("File Path", enrollInputBuffer, IM_ARRAYSIZE(enrollInputBuffer), fileLoadInputFlags[enrollView]);
+                if (ImGui::Button("Load Image") && LoadInputImage(enrollInputBuffer, &enroll_texture, &enroll_image_width, &enroll_image_height))
+                {
+                    enrollInputImage = enrollInputBuffer;
+                }
             }
             if (enroll_texture != NULL)
             {
