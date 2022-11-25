@@ -8,6 +8,22 @@
 static ID3D11Device* g_pd3dDevice = NULL;
 static cv::ocl::Context m_oclCtx;
 
+static float defaultPoI_Radius = 10;
+static float defaultPoI_Thickness = 4;
+
+
+void ImageVisualizer::RenderPoI(ImVec2 position, ImU32 color, float radius, float thickness)
+{
+    if (thickness <= 0) {
+        thickness = defaultPoI_Thickness;
+    }
+    if (radius <= 0) {
+        radius = defaultPoI_Radius;
+    }
+    ImDrawList* drawList = ImGui::GetWindowDrawList();
+    
+    drawList->AddCircle(position, radius, color, 0, thickness);
+}
 void ImageVisualizer::DX11_Init(ID3D11Device* device)
 {
     g_pd3dDevice = device;

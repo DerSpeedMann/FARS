@@ -30,9 +30,12 @@ namespace FarsUI
     std::string matchingScore = "0";
     bool enrollView = true;
 
+    bool renderPoIs = false;
+
     char* viewModeText[2] = { "Matching View", "Enroll View" };
     char* runBText[2] = { "Start Matching", "Enroll Fingerprint" };
     char* changeViewBText[2] = { "Switch to Enroll", "Switch to Matching" };
+    char* testRenderBText[2] = { "Test PoI`s", "Disable PoI`s" };
 
     ImGuiInputTextFlags_ fileLoadInputFlags[2] = {ImGuiInputTextFlags_ReadOnly, ImGuiInputTextFlags_None };
 
@@ -200,10 +203,17 @@ namespace FarsUI
             }
             if (enroll_texture != NULL)
             {
+                
                 ImVec2 availSize = ImGui::GetContentRegionAvail();
                 ImVec2 imageSize = ImageVisualizer::CalculateResolution(enroll_image_width, enroll_image_height, availSize.x, availSize.y / 2);
 
                 ImGui::Image((void*)enroll_texture, imageSize);
+
+                if (renderPoIs)
+                {
+                    ImVec2 winPos = ImGui::GetWindowPos();
+                    ImageVisualizer::RenderPoI(ImVec2(winPos.x + 100, winPos.y + 150), 0xFF0000FF);
+                }
             }
         }
         
@@ -355,6 +365,11 @@ namespace FarsUI
         std::ostringstream scoreText;
         scoreText << "Match Score: " << matchingScore.c_str();
         ImGui::Text(scoreText.str().c_str());
+
+        if (ImGui::Button(testRenderBText[renderPoIs]))
+        {
+            renderPoIs ^= true;
+        }
         ImGui::End();
     }
 };

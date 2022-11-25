@@ -73,8 +73,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(ProjectDir)$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)$(Configuration)\</IntDir>
-    <IncludePath>G:\Users\Michaelwa\Desktop\privat\FH\SIM\PRO_02\opencv\build\include;$(IncludePath)</IncludePath>
-    <LibraryPath>G:\Users\Michaelwa\Desktop\privat\FH\SIM\PRO_02\opencv\build\x64\vc15\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\..\..\opencv\build\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\..\opencv\build\x64\vc15\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(ProjectDir)$(Configuration)\</OutDir>
@@ -153,9 +153,12 @@
     <ClInclude Include="..\..\backends\imgui_impl_dx11.h" />
     <ClInclude Include="..\..\backends\imgui_impl_win32.h" />
     <ClInclude Include="FarsUI.h" />
+    <ClInclude Include="FeatureMinutia.h" />
+    <ClInclude Include="FeatureTemplate.h" />
     <ClInclude Include="FingerJetModule.h" />
     <ClInclude Include="ImageConvertingModule.h" />
     <ClInclude Include="ImageVisualizer.h" />
+    <ClInclude Include="Iso19794p2v2005Template.h" />
     <ClInclude Include="json.hpp" />
     <ClInclude Include="MatchingModule.h" />
     <ClInclude Include="Module.h" />
@@ -163,6 +166,8 @@
     <ClInclude Include="SourceAFIS_ExtModule.h" />
     <ClInclude Include="SourceAFIS_MatModule.h" />
     <ClInclude Include="stb_image.h" />
+    <ClInclude Include="TemplateCodec.h" />
+    <ClInclude Include="TemplateFormat.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\imgui.cpp" />
@@ -176,12 +181,15 @@
     <ClCompile Include="FingerJetModule.cpp" />
     <ClCompile Include="ImageConvertingModule.cpp" />
     <ClCompile Include="ImageVisualizer.cpp" />
+    <ClCompile Include="Iso19794p2v2005Template.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MatchingModule.cpp" />
     <ClCompile Include="Module.cpp" />
     <ClCompile Include="ModuleCaller.cpp" />
     <ClCompile Include="SourceAFIS_ExtModule.cpp" />
     <ClCompile Include="SourceAFIS_MatModule.cpp" />
+    <ClCompile Include="TemplateCodec.cpp" />
+    <ClCompile Include="TemplateFormat.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\misc\debuggers\imgui.natvis" />
