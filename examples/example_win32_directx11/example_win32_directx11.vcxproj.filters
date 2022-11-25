@@ -72,21 +72,6 @@
     <ClInclude Include="json.hpp">
       <Filter>sources\Fars\Helpers</Filter>
     </ClInclude>
-    <ClInclude Include="Iso19794p2v2005Template.h">
-      <Filter>sources\Fars\Templates</Filter>
-    </ClInclude>
-    <ClInclude Include="TemplateCodec.h">
-      <Filter>sources\Fars\Templates</Filter>
-    </ClInclude>
-    <ClInclude Include="TemplateFormat.h">
-      <Filter>sources\Fars\Templates</Filter>
-    </ClInclude>
-    <ClInclude Include="FeatureTemplate.h">
-      <Filter>sources\Fars\Templates\Features</Filter>
-    </ClInclude>
-    <ClInclude Include="FeatureMinutia.h">
-      <Filter>sources\Fars\Templates\Features</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\imgui.cpp">
