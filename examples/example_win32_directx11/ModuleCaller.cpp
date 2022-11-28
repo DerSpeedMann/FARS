@@ -48,6 +48,13 @@ namespace ModuleCaller
         return converter.from_bytes(string);
     }
 
+    int CallJavaModule(std::string executablePath, std::string parameters)
+    {
+        std::string jarFilePath = "java -jar " + executablePath + " " + parameters;
+
+        return system(jarFilePath.c_str());
+    }
+
     int CallModule(std::string executablePath, std::string parameters)
     {
         // additional information
