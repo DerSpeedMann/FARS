@@ -10,7 +10,7 @@ FingerJetModule::FingerJetModule()
 {
     ModuleName = "FingerJetFXOSE";
     OutputFileNames[0] = "fjfx01_Matching.ist";
-    OutputFileNames[0] = "fjfx01_Enroll.ist";
+    OutputFileNames[1] = "fjfx01_Enroll.ist";
     ModuleExecutable = "fjfxSample.exe";
 }
 

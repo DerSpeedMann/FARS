@@ -357,14 +357,18 @@ namespace FarsUI
             Run();
         }
 
-        if(ImGui::Button(changeViewBText[enrollView]))
+        if (!templateFile.empty())
         {
-            enrollView ^= true;
+            if (ImGui::Button(changeViewBText[enrollView]))
+            {
+                enrollView ^= true;
+            }
+
+            std::ostringstream scoreText;
+            scoreText << "Match Score: " << matchingScore.c_str();
+            ImGui::Text(scoreText.str().c_str());
         }
 
-        std::ostringstream scoreText;
-        scoreText << "Match Score: " << matchingScore.c_str();
-        ImGui::Text(scoreText.str().c_str());
 
         if (ImGui::Button(testRenderBText[renderPoIs]))
         {
