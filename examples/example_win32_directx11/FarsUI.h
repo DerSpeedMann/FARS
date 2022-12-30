@@ -1,4 +1,6 @@
 #pragma once
+#include "ErrorHandler.h"
+
 namespace FarsUI
 {
     void RenderUI();
@@ -7,5 +9,6 @@ namespace FarsUI
     void RenderExtraction(int* extractionSelection);
     void RenderMatching();
     void RenderControl();
+    void RenderError(ErrorHandler *handler);
 };
 

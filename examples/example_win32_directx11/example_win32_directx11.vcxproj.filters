@@ -10,17 +10,14 @@
     <Filter Include="sources\Fars">
       <UniqueIdentifier>{a93a97a7-fb27-42a3-8833-89a46cee6906}</UniqueIdentifier>
     </Filter>
-    <Filter Include="sources\Fars\Modules">
-      <UniqueIdentifier>{9d96fa21-aeaf-4647-8171-7b7230a1fb69}</UniqueIdentifier>
-    </Filter>
     <Filter Include="sources\Fars\Helpers">
       <UniqueIdentifier>{841444b9-627e-44b9-9d91-2eb7ff05c4d1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="sources\Fars\Templates">
-      <UniqueIdentifier>{ed46959e-a63a-4bce-a155-fa75e0705fb7}</UniqueIdentifier>
+    <Filter Include="sources\Fars\Models">
+      <UniqueIdentifier>{fefd9021-4675-49de-b43b-860a542d43c5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="sources\Fars\Templates\Features">
-      <UniqueIdentifier>{694a00ea-cad4-4522-b5d3-38fd20b31ddb}</UniqueIdentifier>
+    <Filter Include="sources\Fars\Models\Modules">
+      <UniqueIdentifier>{9d96fa21-aeaf-4647-8171-7b7230a1fb69}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -43,13 +40,13 @@
       <Filter>sources\Fars</Filter>
     </ClInclude>
     <ClInclude Include="Module.h">
-      <Filter>sources\Fars\Modules</Filter>
+      <Filter>sources\Fars\Models\Modules</Filter>
     </ClInclude>
     <ClInclude Include="FingerJetModule.h">
-      <Filter>sources\Fars\Modules</Filter>
+      <Filter>sources\Fars\Models\Modules</Filter>
     </ClInclude>
     <ClInclude Include="ImageConvertingModule.h">
-      <Filter>sources\Fars\Modules</Filter>
+      <Filter>sources\Fars\Models\Modules</Filter>
     </ClInclude>
     <ClInclude Include="ModuleCaller.h">
       <Filter>sources\Fars\Helpers</Filter>
@@ -61,15 +58,21 @@
       <Filter>sources\Fars\Helpers</Filter>
     </ClInclude>
     <ClInclude Include="SourceAFIS_ExtModule.h">
-      <Filter>sources\Fars\Modules</Filter>
+      <Filter>sources\Fars\Models\Modules</Filter>
     </ClInclude>
     <ClInclude Include="SourceAFIS_MatModule.h">
-      <Filter>sources\Fars\Modules</Filter>
+      <Filter>sources\Fars\Models\Modules</Filter>
     </ClInclude>
     <ClInclude Include="MatchingModule.h">
-      <Filter>sources\Fars\Modules</Filter>
+      <Filter>sources\Fars\Models\Modules</Filter>
     </ClInclude>
     <ClInclude Include="json.hpp">
+      <Filter>sources\Fars\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleType.h">
+      <Filter>sources\Fars\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="ErrorHandler.h">
       <Filter>sources\Fars\Helpers</Filter>
     </ClInclude>
   </ItemGroup>
@@ -102,13 +105,13 @@
       <Filter>sources\Fars</Filter>
     </ClCompile>
     <ClCompile Include="Module.cpp">
-      <Filter>sources\Fars\Modules</Filter>
+      <Filter>sources\Fars\Models\Modules</Filter>
     </ClCompile>
     <ClCompile Include="ImageConvertingModule.cpp">
-      <Filter>sources\Fars\Modules</Filter>
+      <Filter>sources\Fars\Models\Modules</Filter>
     </ClCompile>
     <ClCompile Include="FingerJetModule.cpp">
-      <Filter>sources\Fars\Modules</Filter>
+      <Filter>sources\Fars\Models\Modules</Filter>
     </ClCompile>
     <ClCompile Include="ModuleCaller.cpp">
       <Filter>sources\Fars\Helpers</Filter>
@@ -117,22 +120,16 @@
       <Filter>sources\Fars\Helpers</Filter>
     </ClCompile>
     <ClCompile Include="SourceAFIS_ExtModule.cpp">
-      <Filter>sources\Fars\Modules</Filter>
+      <Filter>sources\Fars\Models\Modules</Filter>
     </ClCompile>
     <ClCompile Include="SourceAFIS_MatModule.cpp">
-      <Filter>sources\Fars\Modules</Filter>
+      <Filter>sources\Fars\Models\Modules</Filter>
     </ClCompile>
     <ClCompile Include="MatchingModule.cpp">
-      <Filter>sources\Fars\Modules</Filter>
+      <Filter>sources\Fars\Models\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="Iso19794p2v2005Template.cpp">
-      <Filter>sources\Fars\Templates</Filter>
-    </ClCompile>
-    <ClCompile Include="TemplateCodec.cpp">
-      <Filter>sources\Fars\Templates</Filter>
-    </ClCompile>
-    <ClCompile Include="TemplateFormat.cpp">
-      <Filter>sources\Fars\Templates</Filter>
+    <ClCompile Include="ErrorHandler.cpp">
+      <Filter>sources\Fars\Helpers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

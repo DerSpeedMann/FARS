@@ -1,6 +1,13 @@
 #include "FarsUI.h"
+
 #include "imgui.h"
 #include "imgui_impl_dx11.h"
+#include <locale>
+#include <codecvt>
+#include <string>
+#include <vector>
+#include <iostream>
+#include <d3d11.h>
 
 //Helpers
 #include "ModuleCaller.h"
@@ -13,13 +20,7 @@
 #include "FingerJetModule.h"
 #include "SourceAFIS_ExtModule.h"
 #include "SourceAFIS_MatModule.h"
-
-#include <locale>
-#include <codecvt>
-#include <string>
-#include <vector>
-#include <iostream>
-#include <d3d11.h>
+#include "ModuleType.h"
 
 namespace FarsUI
 {
@@ -29,6 +30,8 @@ namespace FarsUI
     std::string activeFile;
     std::string matchingScore = "0";
     bool enrollView = true;
+
+    ErrorHandler errorHandler = ErrorHandler(ModuleType::None);
 
     bool renderPoIs = false;
 
@@ -92,7 +95,9 @@ namespace FarsUI
 
         if (enrollInputImage.empty())
         {
-            std::cout << "No enroll Fingerprint selected!\n";
+            std::string error = "No enroll Fingerprint selected!\n";
+            std::cout << error;
+            errorHandler.setNonModuleError(error);
             return;
         }
 
@@ -106,7 +111,8 @@ namespace FarsUI
         {
             if (templateFile.empty())
             {
-                std::cout << "No Fingerprint enrolled!\n";
+                std::string error = "No Fingerprint enrolled!\n";
+                std::cout << error;
                 return;
             }
             if (matchingInputImage.empty())
@@ -130,7 +136,6 @@ namespace FarsUI
             if (!(*PreprocessingModules[i]).Run(activeFile, enrollView, &out))
             {
                 std::cout << "Running Preprocessing Module Failed!\n";
-                //TODO: visualise error
                 return;
             }
             activeFile = out;
@@ -186,6 +191,8 @@ namespace FarsUI
         }
 
         RenderControl();
+
+        RenderError(&errorHandler);
     }
 
     void RenderInput() {
@@ -375,5 +382,26 @@ namespace FarsUI
             renderPoIs ^= true;
         }
         ImGui::End();
+    }
+    void RenderError(ErrorHandler *errorHandler)
+    {
+        if ((*errorHandler).ErrorActive)
+        {
+            (*errorHandler).ErrorActive = false;
+            ImGui::OpenPopup("Error");
+        }
+            
+
+        bool open = true;
+        if (ImGui::BeginPopupModal("Error", &open))
+        {
+            ImGui::Text((*errorHandler).getErrorString());
+            if (ImGui::Button("Close"))
+            {
+                ImGui::CloseCurrentPopup();
+            }
+
+            ImGui::EndPopup();
+        }
     }
 };
