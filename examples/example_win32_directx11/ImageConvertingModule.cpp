@@ -39,16 +39,15 @@ void ImageConvertingModule::Render()
     }
 }
 
-bool ImageConvertingModule::Run(std::string inputFile, bool enrollMode, std::string* out_outputFile)
+bool ImageConvertingModule::Run(std::string inputFilePath, bool enrollMode, std::string* out_outputFile, ErrorHandler *errorHandler)
 {
-    
+    int exitCode = 0;
     int width, height;
     width = height = 0;
-    cv::Mat imageMatrix = ImageVisualizer::LoadImageMatrixFromFile(inputFile.c_str(), cv::IMREAD_GRAYSCALE, &width, &height);
+    cv::Mat imageMatrix = ImageVisualizer::LoadImageMatrixFromFile(inputFilePath.c_str(), cv::IMREAD_GRAYSCALE, &width, &height);
     if (imageMatrix.empty())
     {
-        std::cout << "Could not load image file: " + inputFile;
-        return false;
+        exitCode = 1;
     }
 
     std::string fingerprintPath = ModuleCaller::GetFingerprintsPath();
@@ -57,9 +56,26 @@ bool ImageConvertingModule::Run(std::string inputFile, bool enrollMode, std::str
 
     if (!ImageVisualizer::SaveImageToFile(outputPath.c_str(), imageMatrix))
     {
-        std::cout << "Could not save image file: " + inputFile;
-        return false;
+        exitCode = 2;
     }
     *out_outputFile = outputPath;
-    return true;
+
+    if (exitCode != 0)
+    {
+        std::string errorMessage;
+        switch (exitCode) {
+        case 1:
+            std::cout << "Could not load image file: \n" + inputFilePath;
+            break;
+        case 2:
+            std::cout << "Could not save image file: \n" + outputPath;
+            break;
+        default:
+            errorMessage = "Unknown Error, check console for more details!";
+            break;
+        }
+        errorHandler->setModuleError(exitCode, errorMessage, ModuleName);
+    }
+
+    return exitCode != 0;
 }

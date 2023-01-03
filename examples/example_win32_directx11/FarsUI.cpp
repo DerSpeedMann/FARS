@@ -113,11 +113,14 @@ namespace FarsUI
             {
                 std::string error = "No Fingerprint enrolled!\n";
                 std::cout << error;
+                errorHandler.setNonModuleError(error);
                 return;
             }
             if (matchingInputImage.empty())
             {
-                std::cout << "No matching Fingerprint selected!\n";
+                std::string error = "No matching Fingerprint selected!\n";
+                std::cout << error;
+                errorHandler.setNonModuleError(error);
                 return;
             }
             activeFile = matchingInputImage;
@@ -125,7 +128,8 @@ namespace FarsUI
             selectedExtractionModule = matchingSelectedExtractionModule;
 
         }
-        
+
+        errorHandler.ActiveModuleType = ModuleType::Preprocessing;
         for (int i = 0; i < IM_ARRAYSIZE(PreprocessingModules); i++)
         {
             if (!preprocessingSelection[i])
@@ -133,7 +137,7 @@ namespace FarsUI
                 continue;
             }
 
-            if (!(*PreprocessingModules[i]).Run(activeFile, enrollView, &out))
+            if (!(*PreprocessingModules[i]).Run(activeFile, enrollView, &out, &errorHandler))
             {
                 std::cout << "Running Preprocessing Module Failed!\n";
                 return;
@@ -141,7 +145,8 @@ namespace FarsUI
             activeFile = out;
         }
 
-        if ((*ExtractionModules[selectedExtractionModule]).Run(activeFile, enrollView, &out))
+        errorHandler.ActiveModuleType = ModuleType::Extraction;
+        if ((*ExtractionModules[selectedExtractionModule]).Run(activeFile, enrollView, &out, &errorHandler))
         {
             std::cout << "Running Extraction Module Failed!\n";
             return;
@@ -154,6 +159,7 @@ namespace FarsUI
             return;
         }
 
+        errorHandler.ActiveModuleType = ModuleType::Matching;
         if ((*MatchingModules[matchingSelectedMatchingModule]).Run(activeFile, templateFile, &out))
         {
             std::cout << "Running Matching Module Failed!\n";

@@ -124,7 +124,7 @@ bool ImageVisualizer::LoadTextureFromFile(const char* filename, ID3D11ShaderReso
     g_pd3dDevice->CreateShaderResourceView(pTexture, &srvDesc, out_srv);
     pTexture->Release();
 
-    std::cout << printf("Did load image w: %d h: %d\n", *out_width, *out_height);
+    printf("Did load image w: %d h: %d\n", *out_width, *out_height);
 
     return true;
 }

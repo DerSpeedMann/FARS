@@ -8,5 +8,5 @@ public:
 
     void Render() override;
 
-    bool Run(std::string inputFilePath, bool enrollMode, std::string* out_outputFilePath) override;
+    bool Run(std::string inputFilePath, bool enrollMode, std::string* out_outputFilePath, ErrorHandler* errorHandler) override;
 };

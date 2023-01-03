@@ -18,7 +18,7 @@
     {
         ImGui::Text("Generic Details");
     }
-    bool Module::Run(std::string inputFile, bool enrollMode, std::string* out_outputFile)
+    bool Module::Run(std::string inputFile, bool enrollMode, std::string* out_outputFile, ErrorHandler* errorHandler)
     {
         *out_outputFile = "";
         return true;

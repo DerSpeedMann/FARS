@@ -19,7 +19,7 @@ void SourceAFIS_ExtModule::Render()
 
 }
 
-bool SourceAFIS_ExtModule::Run(std::string inputFilePath, bool enrollMode, std::string* out_outputFilePath) {
+bool SourceAFIS_ExtModule::Run(std::string inputFilePath, bool enrollMode, std::string* out_outputFilePath, ErrorHandler* errorHandler) {
 
     std::string outPath = ModuleCaller::GetTmpPath() + OutputFileNames[enrollMode];
 
