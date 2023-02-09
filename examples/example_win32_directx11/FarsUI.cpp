@@ -80,7 +80,7 @@ namespace FarsUI
     {
         if (!ImageVisualizer::LoadTextureFromFile(imagePath.c_str(), out_srv, out_width, out_height))
         {
-            std::cout << printf("Loading Image failed!\n");
+            errorHandler.setNonModuleError("Loading Image failed, check console for more details!");
             return false;
         }
         return true;

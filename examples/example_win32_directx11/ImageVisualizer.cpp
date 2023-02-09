@@ -37,19 +37,21 @@ void ImageVisualizer::DX11_Init(ID3D11Device* device)
 
 ImVec2 ImageVisualizer::CalculateResolution(int originalWidth, int originalHeight, int maxWidth, int maxHeight)
 {
-    //TODO: fix /0
-    int aspectRatio = originalHeight / originalWidth;
+
     ImVec2 newSize = ImVec2(originalWidth, originalHeight);
 
-    if (maxWidth < originalWidth)
-    {
-        newSize.x = maxWidth;
-        newSize.y = aspectRatio * maxWidth;
-    }
-    if (maxHeight < originalHeight)
-    {
-        newSize.y = maxHeight;
-        newSize.x = aspectRatio * maxHeight;
+    if (originalWidth != 0) {
+        int aspectRatio = originalHeight / originalWidth;
+        if (maxWidth < originalWidth)
+        {
+            newSize.x = maxWidth;
+            newSize.y = aspectRatio * maxWidth;
+        }
+        if (maxHeight < originalHeight)
+        {
+            newSize.y = maxHeight;
+            newSize.x = aspectRatio * maxHeight;
+        }
     }
 
     return newSize;
